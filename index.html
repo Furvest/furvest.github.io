@@ -1,154 +1,442 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="utf-8" />
-<title>The Latest History Of Food</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Декодер азбуки Морзе через микрофон</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', system-ui;
+            background: #0a1f1e;
+            color: #eee;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .container {
+            max-width: 900px;
+            width: 100%;
+            background: #1e2f2e;
+            border-radius: 2rem;
+            padding: 1.5rem;
+            box-shadow: 0 20px 30px rgba(0,0,0,0.5);
+        }
+        h1 { text-align: center; margin: 0 0 0.5rem 0; }
+        .mic-control {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        button {
+            background: #3a7ca5;
+            border: none;
+            color: white;
+            padding: 0.6rem 1.2rem;
+            border-radius: 2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.1s;
+        }
+        button:hover { background: #2c5a7a; transform: scale(1.02); }
+        .status {
+            background: #000000aa;
+            padding: 0.5rem;
+            border-radius: 1rem;
+            text-align: center;
+            font-family: monospace;
+            font-weight: bold;
+        }
+        .level {
+            height: 20px;
+            background: #2c3e2f;
+            border-radius: 20px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        .level-fill {
+            width: 0%;
+            height: 100%;
+            background: #4caf50;
+            transition: width 0.05s linear;
+        }
+        .decoded {
+            background: #0a0f12;
+            border-left: 6px solid #ffaa44;
+            padding: 1rem;
+            font-size: 1.6rem;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            word-break: break-all;
+            min-height: 5rem;
+            border-radius: 1rem;
+            margin: 1rem 0;
+        }
+        .stats {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            font-size: 0.8rem;
+            justify-content: space-between;
+        }
+        .stat-card {
+            background: #2c3e2faa;
+            padding: 0.3rem 0.8rem;
+            border-radius: 2rem;
+        }
+        hr { border-color: #4a6a6a; }
+        footer { font-size: 0.7rem; text-align: center; margin-top: 1rem; opacity: 0.7; }
+        .warning {
+            background: #aa5533aa;
+            padding: 0.5rem;
+            border-radius: 1rem;
+            margin: 0.5rem 0;
+        }
+    </style>
 </head>
 <body>
-<!--Создаём таблицу контейнер, которой задаём следующее
-оформление:
-border="1" - рамка вокруг контейнера. Увеличив число, можно увеличить толщину рамки.
-align="center" - размещаем контейнер по центру экрана.
-rules="rows" - убираем двойную рамку.
-style="width:60%;" - добавляем стилевое свойства, делающее
-контейнер и весь сайт "резиновым".
-Сделать полноценный адаптивный дизайн, этим способом невозможно.-->
-<table
-border="1"
-align="center"
-rules="rows"
-style="width:60%;">
-<!--Создаём строку-->
-<tr>
-<!--Создаём ячейку строки-->
-<td>
-<!--ШАПКА САЙТА-->
+<div class="container">
+    <h1>🎙️ Декодер Морзе через микрофон</h1>
+    <p style="text-align:center">Свисти, гуди или стучи — программа распознаёт точки и тире, подстраиваясь под твою скорость.</p>
 
-<!--В ячейке строки создаём ещё одну таблицу для шапки сайта.
-Оформление:
-border="1" - двойная рамка толщиной в 1px
-background="images/168.png" - картинка в шапке сайта, если требуется.
-Адрес картинки вы должны вставить свой.
-bgcolor="#7FFFD4" - фоновый цвет в шапке, если нет картинки.
-cellpadding="10" - отступ содержимого от рамки не менее 10px.
-style="width:100%; border-radius:5px;" - добавляем "резиновость"
-и закругляем уголки рамки-->
-<table
-border="1"
-background="images/168.png"
-bgcolor="#7FFFD4"
-cellpadding="10"
-style="width:100%; border-radius:5px;">
-<!--Создаём строку таблицы-->
-<tr>
-<!--Создаём столбец таблицы-->
-<th>
-<!--Содержание ячейки столбца-->
-<h1>The Latest History Of Food</h1>
-<h3>Мы знаем всё про то, что ты ешь.</h3>
-<!--Закрываем таблицу-->
-</th>
-</tr>
-</table>
+    <div class="mic-control">
+        <button id="enableMicBtn">🎤 Включить микрофон</button>
+        <button id="disableMicBtn" disabled>⏹️ Выключить</button>
+        <button id="clearBtn">🗑 Очистить текст</button>
+        <button id="resetStatsBtn">🔄 Сбросить адаптацию</button>
+    </div>
+    <div class="level">
+        <div class="level-fill" id="levelFill"></div>
+    </div>
+    <div class="status" id="statusText">⚙️ Микрофон отключён. Нажмите «Включить микрофон».</div>
 
-<!--ОСНОВНОЙ КОНТЕНТ-->
+    <div class="stats">
+        <div class="stat-card">🎯 Порог точки: <span id="dotTh">—</span> мс</div>
+        <div class="stat-card">🎯 Порог тире: <span id="dashTh">—</span> мс</div>
+        <div class="stat-card">⏱️ Посл. сигнал: <span id="lastSig">—</span></div>
+        <div class="stat-card">📦 Буфер: <span id="bufferLen">0</span></div>
+    </div>
 
-<!--В этой же ячейке контейнера создаём ещё одну таблицу
-для основного контента.
-Оформление как и в предыдущей таблице-->
+    <div><strong>📝 Декодированное сообщение:</strong></div>
+    <div id="decodedMsg" class="decoded">_</div>
+    <footer>
+        🔊 Микрофон анализирует громкость. Громкий звук = сигнал, тишина = пауза.<br>
+        • Короткий звук → точка • Длинный → тире • Паузы между символами и словами автоматические.<br>
+        <span class="warning">⚠️ Для чистоты декодирования говорите/свистите отрывисто. Фоновый шум может вызывать ложные срабатывания.</span>
+    </footer>
+</div>
 
-<table
-border="1"
-bgcolor="#e6e6fa"
-cellpadding="10"
-style="width:100%; border-radius:5px;">
-<!--Создаём строку-->
-<tr>
-<!--Создаём ячейку
-Оформление:
-rowspan="2" - объединяем две ячейки в одну.
-Число объединяемых ячеек по числу ячеек в сайдбаре.
-style="width:80%" - основной контент занимает 80% всей площади,
-оставшиеся 20% для сайдбара-->
-<td
-rowspan="2"
-style="width:80%">
-<h2>Страница</h2>
-<!--Начинаем абзац с красной строки-->
-<p style="text-indent:20px">
-Добро пожаловать на сайт TLHOF! Здесь можно узнать историю блюд, их состав и
-интересные факты! Пока здесь ничего нет, я хочу пожелать всем удачи! Вы самые крутые!</p>
+<script>
+    // ------------------- Словарь Морзе -------------------
+    const morseMap = {
+        ".-": "A", "-...": "B", "-.-.": "C", "-..": "D", ".": "E", "..-.": "F", "--.": "G",
+        "....": "H", "..": "I", ".---": "J", "-.-": "K", ".-..": "L", "--": "M", "-.": "N",
+        "---": "O", ".--.": "P", "--.-": "Q", ".-.": "R", "...": "S", "-": "T",
+        "..-": "U", "...-": "V", ".--": "W", "-..-": "X", "-.--": "Y", "--..": "Z",
+        "-----": "0", ".----": "1", "..---": "2", "...--": "3", "....-": "4",
+        ".....": "5", "-....": "6", "--...": "7", "---..": "8", "----.": "9",
+        ".-.-.-": ".", "---...": ":", "--..--": ",", "-.-.--": "!", "..--..": "?",
+        ".----.": "'", "-..-.": "/", "-.--.": "(", "-.--.-": ")", ".-...": "&",
+        ".-.-.": "+", "-....-": "-", "..--.-": "_", "...-..-": "$", ".--.-.": "@"
+    };
 
-<p style="text-indent:20px">Здесь в будущем появятся ссылки и картинки на блюда.</p>
-<!--Закрываем ячейку-->
-</td>
+    // ---------- Состояние декодера ----------
+    let currentMorse = "";           // накопленные . и - текущего символа
+    let finalMessage = "";           // весь декодированный текст
 
-<!--САЙДБАР-->
+    // Адаптивные данные
+    let dotDurations = [];   // длительности точек (мс)
+    let dashDurations = [];  // длительности тире
+    let pauseDurations = [];  // межсигнальные паузы (мс)
 
-<!--Создаём ячейку сайдбара-->
-<td bgcolor="#e6e6fa">
-<h3>Меню</h3>
-<!--Абзац для ссылки на страницу сайта-->
-<p>
-<!--Ссылка на страницу сайта-->
-<a href="">
-<!--Картинка маркера перед названием страницы-->
-<img src="http://trueimages.ru/img/00/06/f4fffdb5.png">
-<!--Название страницы
-style="margin-left:5px;" - отступ названия от маркера-->
-<span style="margin-left:5px;">Рестораны</span></a>
-<!--Закрываем абзац-->
-</p>
-<p>
-<a href="">
-<img src="http://trueimages.ru/img/31/ab/4dcb087c2ae4305edcd15171696.jpg">
-<span style="margin-left:5px;">Блюда месяца</span;></a>
-</p>
-<p>
-<a href="">
-<img src="http://trueimages.ru/img/31/ab/4dcb087c2ae4305edcd15171696.jpg">
-<span style="margin-left:5px;">Популярное</span></a>
-</p>
-<!--Закрываем строку Меню-->
-</td>
-</tr>
-<!--Создаём строку с дополнительной информацией-->
-<tr>
-<!--Ячейка с дополнительной информацией-->
-<td
-bgcolor="#e6e6fa"
-align="center">
-<h3>Стоит посетить</h3>
-<p>Текст общей информации или реклама</p>
-<!--Закрываем ячейку с общей информацией
-и таблицу основного контента-->
-</td>
-</tr>
-</table>
+    let dotThreshold = 150;    // начальные пороги
+    let dashThreshold = 300;
+let symbolPauseMin = 250;   // мин. пауза для завершения символа
+let wordPauseMin = 600;     // мин. пауза для пробела
 
-<!--ПОДВАЛ-->
+    // Тайминги для работы с микрофоном
+    let soundStartTime = 0;
+    let lastSoundEndTime = 0;
+    let isSoundActive = false;
+    let silenceTimer = null;
 
-<!--Создаём таблицу подвала-->
-<table
-border="1"
-bgcolor="#7FFFD4"
-height="100"
-cellpadding="10"
-style="width:100%; border-radius:5px;">
-<!--Создаём строку.-->
-<tr>
-<!--Создаём столбец-->
-<th>
-<h3>Подвал</h3>
-<p>Пишите в TG: @furvst, отправляйте письма на Email: swampyshvabra@vk.com</p>
-<!--Закрываем таблицу подвала. При желании в подвале можно
-сделать несколько строк и столбцов-->
-</th>
-</tr>
-</table>
-<!--Закрываем таблицу контейнера-->
-</td>
-</tr>
-</table>
+    // DOM элементы
+    const statusSpan = document.getElementById('statusText');
+    const decodedDiv = document.getElementById('decodedMsg');
+    const dotThSpan = document.getElementById('dotTh');
+    const dashThSpan = document.getElementById('dashTh');
+    const lastSigSpan = document.getElementById('lastSig');
+    const bufferLenSpan = document.getElementById('bufferLen');
+    const levelFill = document.getElementById('levelFill');
+
+    // Аудио-переменные
+    let mediaStream = null;
+    let audioContext = null;
+    let sourceNode = null;
+    let analyserNode = null;
+    let animationId = null;
+    let isMicEnabled = false;
+
+    // Порог громкости (0..1) – регулируйте при необходимости
+    const VOLUME_THRESHOLD = 0.03;   // чувствительность (тихие звуки ~0.01, громкие >0.1)
+
+    // Обновление UI порогов
+    function updateUI() {
+        dotThSpan.innerText = Math.round(dotThreshold);
+        dashThSpan.innerText = Math.round(dashThreshold);
+        bufferLenSpan.innerText = currentMorse.length;
+    }
+
+    // Адаптивное вычисление порогов
+    function adaptThresholds() {
+        if (dotDurations.length + dashDurations.length < 3) return;
+
+        let avgDot = 0, avgDash = 0;
+        if (dotDurations.length) avgDot = dotDurations.reduce((a,b)=>a+b,0)/dotDurations.length;
+        if (dashDurations.length) avgDash = dashDurations.reduce((a,b)=>a+b,0)/dashDurations.length;
+
+        if (dotDurations.length && dashDurations.length) {
+            let newTh = (avgDot + avgDash) / 2;
+            dotThreshold = Math.max(avgDot * 0.8, newTh * 0.9);
+            dashThreshold = Math.min(avgDash * 1.2, newTh * 1.8);
+            if (dashThreshold <= dotThreshold) dashThreshold = dotThreshold * 1.5;
+        } else if (dotDurations.length >= 3) {
+            dotThreshold = avgDot * 1.2;
+            dashThreshold = avgDot * 2.5;
+        } else if (dashDurations.length >= 3) {
+            dashThreshold = avgDash * 0.8;
+            dotThreshold = avgDash * 0.3;
+        }
+
+        dotThreshold = Math.min(300, Math.max(50, dotThreshold));
+        dashThreshold = Math.min(700, Math.max(100, dashThreshold));
+
+        // Адаптация пауз
+        if (pauseDurations.length > 4) {
+            let sorted = [...pauseDurations].sort((a,b)=>a-b);
+            let median = sorted[Math.floor(sorted.length/2)];
+            symbolPauseMin = Math.max(median * 2.2, dotThreshold * 1.2);
+            wordPauseMin = Math.max(symbolPauseMin * 2.2, dotThreshold * 3.5);
+        } else {
+            symbolPauseMin = dotThreshold * 2.2;
+            wordPauseMin = dotThreshold * 4.5;
+        }
+        symbolPauseMin = Math.min(800, Math.max(100, symbolPauseMin));
+        wordPauseMin = Math.min(1500, Math.max(250, wordPauseMin));
+
+        updateUI();
+        console.log(`Адаптация: точка~${avgDot.toFixed(0)}мс, тире~${avgDash.toFixed(0)}мс, пороги ${dotThreshold.toFixed(0)}/${dashThreshold.toFixed(0)}мс, пауза символ ${symbolPauseMin}мс, слово ${wordPauseMin}мс`);
+    }
+
+    // Завершить текущий символ и добавить букву
+    function finalizeSymbol() {
+        if (currentMorse.length === 0) return false;
+        let ch = morseMap[currentMorse];
+        if (ch) {
+            finalMessage += ch;
+            statusSpan.innerText = `✅ Распознан: ${ch} (${currentMorse})`;
+        } else {
+            finalMessage += `[${currentMorse}]`;
+            statusSpan.innerText = `❓ Неизвестный код: ${currentMorse}`;
+        }
+        decodedDiv.innerText = finalMessage || "_";
+        currentMorse = "";
+        updateUI();
+        return true;
+    }
+
+    function addSpace() {
+        if (finalMessage.length > 0 && finalMessage[finalMessage.length-1] !== ' ') {
+            finalMessage += " ";
+            decodedDiv.innerText = finalMessage;
+            statusSpan.innerText = "➕ Пробел (слово)";
+        }
+    }
+
+    // Обработка завершённого звукового импульса (длительность в мс)
+    function processSoundDuration(durationMs) {
+        if (durationMs < 25) return; // слишком короткий щелчок – игнор
+        let isDot = (durationMs < dotThreshold);
+        let isDash = (durationMs > dashThreshold);
+
+        if (isDot) {
+            currentMorse += ".";
+            dotDurations.push(durationMs);
+            lastSigSpan.innerText = `точка (${durationMs} мс)`;
+        } else if (isDash) {
+            currentMorse += "-";
+            dashDurations.push(durationMs);
+            lastSigSpan.innerText = `тире (${durationMs} мс)`;
+        } else {
+            // зона неопределённости – классифицируем по средним
+            let avgDot = dotDurations.length ? dotDurations.reduce((a,b)=>a+b,0)/dotDurations.length : dotThreshold;
+            let avgDash = dashDurations.length ? dashDurations.reduce((a,b)=>a+b,0)/dashDurations.length : dashThreshold;
+            if (Math.abs(durationMs - avgDot) < Math.abs(durationMs - avgDash)) {
+                currentMorse += ".";
+                dotDurations.push(durationMs);
+                lastSigSpan.innerText = `точка* (${durationMs} мс)`;
+            } else {
+                currentMorse += "-";
+                dashDurations.push(durationMs);
+                lastSigSpan.innerText = `тире* (${durationMs} мс)`;
+            }
+        }
+        updateUI();
+        adaptThresholds();
+    }
+
+    // Обработка наступления тишины (конец сигнала)
+    function onSoundEnd() {
+        if (!isSoundActive) return;
+        const now = performance.now();
+        const duration = now - soundStartTime;
+        isSoundActive = false;
+        processSoundDuration(duration);
+
+        // Запускаем таймер паузы: если через некоторое время не начнётся новый звук – завершаем символ или слово
+        if (silenceTimer) clearTimeout(silenceTimer);
+        silenceTimer = setTimeout(() => {
+            const silenceDuration = performance.now() - lastSoundEndTime;
+            if (!isSoundActive && currentMorse.length > 0) {
+                if (silenceDuration >= wordPauseMin) {
+                    finalizeSymbol();
+                    addSpace();
+                } else if (silenceDuration >= symbolPauseMin) {
+                    finalizeSymbol();
+                }
+            }
+            silenceTimer = null;
+        }, Math.max(symbolPauseMin, 150));
+        lastSoundEndTime = now;
+    }
+
+    function onSoundStart() {
+        if (silenceTimer) {
+            clearTimeout(silenceTimer);
+            silenceTimer = null;
+        }
+        // Измеряем паузу между предыдущим окончанием и новым началом
+        const now = performance.now();
+        if (lastSoundEndTime > 0) {
+            let pause = now - lastSoundEndTime;
+            if (pause > 20) {
+                pauseDurations.push(pause);
+                // Если пауза достаточно длинная – завершаем символ до начала нового
+                if (currentMorse.length > 0) {
+                    if (pause >= wordPauseMin) {
+                        finalizeSymbol();
+                        addSpace();
+                    } else if (pause >= symbolPauseMin) {
+                        finalizeSymbol();
+                    }
+                }
+                adaptThresholds();
+            }
+        }
+        isSoundActive = true;
+        soundStartTime = now;
+        statusSpan.innerText = "🔊 Звук...";
+    }
+
+    // Функция анализа громкости (вызывается каждый кадр)
+    function updateVolume() {
+        if (!isMicEnabled || !analyserNode) return;
+        const dataArray = new Uint8Array(analyserNode.frequencyBinCount);
+        analyserNode.getByteTimeDomainData(dataArray);
+        let maxSample = 0;
+        for (let i = 0; i < dataArray.length; i++) {
+            let v = (dataArray[i] - 128) / 128;
+            maxSample = Math.max(maxSample, Math.abs(v));
+        }
+        let level = maxSample; // от 0 до ~1
+        levelFill.style.width = (level * 100) + "%";
+        // Определяем превышение порога
+        const isLoud = level > VOLUME_THRESHOLD;
+        if (isLoud && !isSoundActive) {
+            onSoundStart();
+        } else if (!isLoud && isSoundActive) {
+            onSoundEnd();
+        }
+        animationId = requestAnimationFrame(updateVolume);
+    }
+
+    // Включение микрофона
+    async function enableMicrophone() {
+        if (isMicEnabled) return;
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            mediaStream = stream;
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            analyserNode = audioContext.createAnalyser();
+            analyserNode.fftSize = 256;
+            sourceNode = audioContext.createMediaStreamSource(stream);
+            sourceNode.connect(analyserNode);
+            // не подключаем к динамикам, только анализ
+            await audioContext.resume();
+            isMicEnabled = true;
+            statusSpan.innerText = "🎙️ Микрофон активен. Издавайте звуки (свист, голос) — декодирую...";
+            document.getElementById('enableMicBtn').disabled = true;
+            document.getElementById('disableMicBtn').disabled = false;
+            // Сбросить временные метки
+            soundStartTime = 0;
+            lastSoundEndTime = 0;
+            isSoundActive = false;
+            if (silenceTimer) clearTimeout(silenceTimer);
+            updateVolume();
+        } catch (err) {
+            console.error(err);
+            statusSpan.innerText = "❌ Ошибка доступа к микрофону: " + err.message;
+        }
+    }
+
+    function disableMicrophone() {
+        if (!isMicEnabled) return;
+        if (animationId) cancelAnimationFrame(animationId);
+        if (sourceNode) sourceNode.disconnect();
+        if (analyserNode) analyserNode.disconnect();
+        if (audioContext) audioContext.close();
+        if (mediaStream) {
+            mediaStream.getTracks().forEach(track => track.stop());
+        }
+        isMicEnabled = false;
+        statusSpan.innerText = "🔇 Микрофон отключён";
+        document.getElementById('enableMicBtn').disabled = false;
+        document.getElementById('disableMicBtn').disabled = true;
+        levelFill.style.width = "0%";
+        if (silenceTimer) clearTimeout(silenceTimer);
+        isSoundActive = false;
+    }
+
+    function resetMessage() {
+        finalMessage = "";
+        currentMorse = "";
+        decodedDiv.innerText = "_";
+        statusSpan.innerText = "🗑 Сообщение очищено";
+        updateUI();
+    }
+
+    function resetAdapter() {
+        dotDurations = [];
+        dashDurations = [];
+        pauseDurations = [];
+        dotThreshold = 150;
+        dashThreshold = 300;
+        symbolPauseMin = 250;
+        wordPauseMin = 600;
+        updateUI();
+        statusSpan.innerText = "🔄 Адаптация сброшена (переобучение скорости)";
+    }
+
+    // Назначение кнопок
+    document.getElementById('enableMicBtn').addEventListener('click', enableMicrophone);
+    document.getElementById('disableMicBtn').addEventListener('click', disableMicrophone);
+    document.getElementById('clearBtn').addEventListener('click', resetMessage);
+    document.getElementById('resetStatsBtn').addEventListener('click', resetAdapter);
+
+    updateUI();
+</script>
 </body>
 </html>
