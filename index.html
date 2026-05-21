@@ -40,7 +40,6 @@
             letter-spacing: -0.01em;
         }
 
-        /* Контейнер */
         .app-container {
             max-width: 520px;
             margin: 0 auto;
@@ -50,13 +49,13 @@
             gap: 16px;
         }
 
-        /* Шапка */
         .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 8px 0;
         }
+
         .header .logo {
             font-size: 1.4rem;
             font-weight: 700;
@@ -66,6 +65,7 @@
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
+
         .header .date {
             font-size: 0.8rem;
             color: var(--text3);
@@ -75,7 +75,6 @@
             font-weight: 500;
         }
 
-        /* Главная карточка баланса */
         .balance-card {
             background: linear-gradient(145deg, #131c2e, #1a2640);
             border: 1px solid var(--border);
@@ -85,6 +84,7 @@
             position: relative;
             overflow: hidden;
         }
+
         .balance-card::after {
             content: '';
             position: absolute;
@@ -96,6 +96,7 @@
             background: rgba(79, 140, 255, 0.08);
             pointer-events: none;
         }
+
         .balance-card .label {
             font-size: 0.78rem;
             color: var(--text2);
@@ -104,18 +105,21 @@
             font-weight: 600;
             margin-bottom: 6px;
         }
+
         .balance-card .net-worth {
             font-size: 2.6rem;
             font-weight: 800;
             letter-spacing: -0.03em;
             color: #fff;
         }
+
         .balance-row {
             display: flex;
             gap: 20px;
             margin-top: 14px;
             flex-wrap: wrap;
         }
+
         .balance-item {
             flex: 1;
             min-width: 90px;
@@ -124,12 +128,15 @@
             padding: 14px 16px;
             border: 1px solid transparent;
         }
+
         .balance-item.assets {
             border-color: rgba(0, 200, 151, 0.3);
         }
+
         .balance-item.debts {
             border-color: rgba(255, 71, 87, 0.3);
         }
+
         .balance-item .item-label {
             font-size: 0.7rem;
             color: var(--text3);
@@ -137,19 +144,21 @@
             letter-spacing: 0.04em;
             font-weight: 600;
         }
+
         .balance-item .item-value {
             font-size: 1.3rem;
             font-weight: 700;
             margin-top: 2px;
         }
+
         .assets .item-value {
             color: var(--green);
         }
+
         .debts .item-value {
             color: var(--red);
         }
 
-        /* Секция */
         .section-title {
             font-size: 0.85rem;
             font-weight: 700;
@@ -161,6 +170,7 @@
             align-items: center;
             gap: 8px;
         }
+
         .section-title .dot {
             width: 7px;
             height: 7px;
@@ -169,7 +179,6 @@
             display: inline-block;
         }
 
-        /* График-диаграмма долгов */
         .chart-container {
             background: var(--surface);
             border-radius: var(--radius);
@@ -177,15 +186,18 @@
             border: 1px solid var(--border);
             box-shadow: 0 2px 15px rgba(0, 0, 0, 0.3);
         }
+
         .chart-inner {
             display: flex;
             align-items: center;
             gap: 18px;
             flex-wrap: wrap;
         }
+
         canvas {
             flex-shrink: 0;
         }
+
         .chart-legend {
             display: flex;
             flex-direction: column;
@@ -193,6 +205,7 @@
             flex: 1;
             min-width: 140px;
         }
+
         .legend-item {
             display: flex;
             align-items: center;
@@ -200,12 +213,14 @@
             font-size: 0.78rem;
             font-weight: 500;
         }
+
         .legend-dot {
             width: 12px;
             height: 12px;
             border-radius: 4px;
             flex-shrink: 0;
         }
+
         .legend-value {
             margin-left: auto;
             font-weight: 700;
@@ -213,12 +228,12 @@
             font-size: 0.8rem;
         }
 
-        /* Список банков */
         .banks-list {
             display: flex;
             flex-direction: column;
             gap: 10px;
         }
+
         .bank-card {
             background: var(--surface);
             border-radius: var(--radius);
@@ -228,14 +243,17 @@
             cursor: pointer;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
         }
+
         .bank-card:hover {
             border-color: #2e3a55;
             box-shadow: 0 6px 25px rgba(0, 0, 0, 0.4);
         }
+
         .bank-card.expanded {
             border-color: var(--accent);
             box-shadow: 0 8px 35px rgba(79, 140, 255, 0.2);
         }
+
         .bank-header {
             display: flex;
             align-items: center;
@@ -243,6 +261,7 @@
             padding: 16px 18px;
             user-select: none;
         }
+
         .bank-icon {
             width: 44px;
             height: 44px;
@@ -255,46 +274,53 @@
             color: #fff;
             flex-shrink: 0;
         }
+
         .bank-info {
             flex: 1;
             min-width: 0;
         }
+
         .bank-name {
             font-weight: 700;
             font-size: 1rem;
             color: #fff;
         }
+
         .bank-sub {
             font-size: 0.7rem;
             color: var(--text3);
             margin-top: 2px;
         }
+
         .bank-balances {
             text-align: right;
             flex-shrink: 0;
         }
+
         .bank-balance-asset {
             font-weight: 700;
             color: var(--green);
             font-size: 0.9rem;
         }
+
         .bank-balance-debt {
             font-weight: 700;
             color: var(--red);
             font-size: 0.8rem;
         }
+
         .bank-arrow {
             font-size: 1.2rem;
             color: var(--text3);
             transition: transform 0.3s;
             flex-shrink: 0;
         }
+
         .bank-card.expanded .bank-arrow {
             transform: rotate(180deg);
             color: var(--accent);
         }
 
-        /* Раскрывающаяся часть */
         .bank-details {
             display: none;
             flex-direction: column;
@@ -304,9 +330,11 @@
             padding-top: 12px;
             animation: fadeSlide 0.3s ease;
         }
+
         .bank-card.expanded .bank-details {
             display: flex;
         }
+
         @keyframes fadeSlide {
             from {
                 opacity: 0;
@@ -317,6 +345,7 @@
                 transform: translateY(0);
             }
         }
+
         .detail-row {
             display: flex;
             justify-content: space-between;
@@ -326,19 +355,24 @@
             border-radius: var(--radius-sm);
             font-size: 0.82rem;
         }
+
         .detail-row .detail-name {
             color: var(--text2);
             font-weight: 500;
         }
+
         .detail-row .detail-amount {
             font-weight: 700;
         }
+
         .detail-amount.positive {
             color: var(--green);
         }
+
         .detail-amount.negative {
             color: var(--red);
         }
+
         .progress-bar-wrap {
             background: #1e293b;
             border-radius: 8px;
@@ -346,19 +380,21 @@
             margin-top: 6px;
             overflow: hidden;
         }
+
         .progress-bar-fill {
             height: 100%;
             border-radius: 8px;
             transition: width 0.4s;
         }
-        .progress-bar-fill.debt-fill {
-            background: linear-gradient(90deg, #ff4757, #ff6b81);
-        }
+
         .progress-bar-fill.asset-fill {
             background: linear-gradient(90deg, #00c897, #2ed573);
         }
 
-        /* Кнопка добавить */
+        .progress-bar-fill.debt-fill {
+            background: linear-gradient(90deg, #ff4757, #ff6b81);
+        }
+
         .add-btn {
             display: flex;
             align-items: center;
@@ -375,13 +411,13 @@
             transition: all 0.2s;
             margin-top: 4px;
         }
+
         .add-btn:hover {
             border-color: var(--accent);
             color: var(--accent);
             background: #1a2235;
         }
 
-        /* Адаптив */
         @media (max-width: 400px) {
             .balance-card .net-worth {
                 font-size: 2rem;
@@ -397,13 +433,11 @@
 </head>
 <body>
     <div class="app-container">
-        <!-- Шапка -->
         <div class="header">
             <span class="logo">💳 FinBoard</span>
             <span class="date" id="currentDate"></span>
         </div>
 
-        <!-- Главная карточка баланса -->
         <div class="balance-card">
             <div class="label">💰 Чистый баланс</div>
             <div class="net-worth" id="netWorth">0 ₽</div>
@@ -419,7 +453,6 @@
             </div>
         </div>
 
-        <!-- Диаграмма долгов -->
         <div class="chart-container">
             <div class="section-title"><span class="dot"></span> Структура долгов по банкам</div>
             <div class="chart-inner">
@@ -428,11 +461,9 @@
             </div>
         </div>
 
-        <!-- Список банков -->
         <div class="section-title"><span class="dot"></span> Мои банки</div>
         <div class="banks-list" id="banksList"></div>
 
-        <!-- Кнопка добавить банк (прототип) -->
         <div class="add-btn" onclick="alert('🚀 В будущем здесь можно добавить новый банк или счёт. Это прототип!')">
             + Добавить банк или счёт
         </div>
@@ -440,7 +471,7 @@
 
     <script>
         (function() {
-            // ============ ДАННЫЕ ПРОТОТИПА ============
+            // ============ НОВЫЕ ДАННЫЕ (средства ≈ 56 000 ₽, долги меньше, баланс положительный) ============
             const banksData = [{
                 id: 'sber',
                 name: 'Сбербанк',
@@ -448,13 +479,12 @@
                 color: '#21A038',
                 colorHex: '#21A038',
                 assets: [
-                    { name: 'Дебетовая карта "Мир"', amount: 125000 },
-                    { name: 'Накопительный счёт', amount: 340000 },
-                    { name: 'Вклад "СберВклад"', amount: 500000 },
+                    { name: 'Дебетовая карта «Мир»', amount: 15000 },
+                    { name: 'Накопительный счёт', amount: 18000 }
                 ],
                 debts: [
-                    { name: 'Кредитная карта "СберКарта"', amount: 87000 },
-                    { name: 'Потребительский кредит', amount: 210000 },
+                    { name: 'Кредитная карта «СберКарта»', amount: 5000 },
+                    { name: 'Потребительский кредит', amount: 10000 }
                 ]
             }, {
                 id: 'vtb',
@@ -463,12 +493,11 @@
                 color: '#003C7C',
                 colorHex: '#0a4da4',
                 assets: [
-                    { name: 'Зарплатная карта', amount: 89000 },
-                    { name: 'Дебетовая карта "Мультикарта"', amount: 56000 },
+                    { name: 'Зарплатная карта', amount: 11000 },
+                    { name: 'Дебетовая карта «Мультикарта»', amount: 5000 }
                 ],
                 debts: [
-                    { name: 'Ипотека', amount: 2800000 },
-                    { name: 'Кредит наличными', amount: 450000 },
+                    { name: 'Кредит наличными', amount: 8000 }
                 ]
             }, {
                 id: 'tinkoff',
@@ -477,11 +506,10 @@
                 color: '#FFDD2D',
                 colorHex: '#f5b700',
                 assets: [
-                    { name: 'Дебетовая карта Black', amount: 210000 },
-                    { name: 'Инвесткопилка', amount: 175000 },
+                    { name: 'Дебетовая карта Black', amount: 4000 }
                 ],
                 debts: [
-                    { name: 'Кредитная карта Platinum', amount: 135000 },
+                    { name: 'Кредитная карта Platinum', amount: 3000 }
                 ]
             }, {
                 id: 'alfa',
@@ -489,12 +517,9 @@
                 icon: 'А',
                 color: '#ED1C24',
                 colorHex: '#ED1C24',
-                assets: [
-                    { name: 'Alfa-Card дебетовая', amount: 67000 },
-                ],
+                assets: [],
                 debts: [
-                    { name: 'Кредитная карта "100 дней"', amount: 92000 },
-                    { name: 'Автокредит', amount: 580000 },
+                    { name: 'Кредитная карта «100 дней»', amount: 2000 }
                 ]
             }, {
                 id: 'gazprom',
@@ -503,10 +528,10 @@
                 color: '#0079C1',
                 colorHex: '#0079C1',
                 assets: [
-                    { name: 'Дебетовая карта', amount: 43000 },
+                    { name: 'Дебетовая карта', amount: 3000 }
                 ],
                 debts: [
-                    { name: 'Потребительский кредит', amount: 165000 },
+                    { name: 'Потребительский кредит', amount: 2000 }
                 ]
             }];
 
@@ -579,7 +604,6 @@
             const centerY = chartSize / 2;
             const radius = 55;
 
-            // Собираем данные для диаграммы (только долги > 0)
             const debtEntries = totals.bankSummaries
                 .filter(b => b.totalDebts > 0)
                 .map(b => ({ name: b.name, color: b.colorHex, debt: b.totalDebts }));
@@ -590,7 +614,6 @@
                 ctx.clearRect(0, 0, chartSize, chartSize);
 
                 if (totalDebtsForChart === 0) {
-                    // Пустой круг
                     ctx.beginPath();
                     ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
                     ctx.fillStyle = '#1e293b';
@@ -611,14 +634,12 @@
                     ctx.closePath();
                     ctx.fillStyle = entry.color;
                     ctx.fill();
-                    // небольшая обводка
                     ctx.strokeStyle = '#0a0e14';
                     ctx.lineWidth = 2;
                     ctx.stroke();
                     startAngle += sliceAngle;
                 });
 
-                // Внутренний белый круг (пончик)
                 ctx.beginPath();
                 ctx.arc(centerX, centerY, radius * 0.55, 0, Math.PI * 2);
                 ctx.fillStyle = '#141b22';
@@ -635,11 +656,9 @@
 
             drawChart();
 
-            // Легенда диаграммы
             const legendContainer = document.getElementById('chartLegend');
             legendContainer.innerHTML = debtEntries.map(e => {
-                const percent = totalDebtsForChart > 0 ? ((e.debt / totalDebtsForChart) * 100).toFixed(1) :
-                    '0';
+                const percent = totalDebtsForChart > 0 ? ((e.debt / totalDebtsForChart) * 100).toFixed(1) : '0';
                 return `
                 <div class="legend-item">
                   <div class="legend-dot" style="background:${e.color};"></div>
@@ -648,18 +667,18 @@
                 </div>`;
             }).join('');
 
-            // ============ ОТРИСОВКА СПИСКА БАНКОВ ============
+            // ============ ОТРИСОВКА СПИСКА БАНКОВ (без плюса перед активами) ============
             const banksListContainer = document.getElementById('banksList');
 
             function renderBankCard(summary, index) {
-                const debtPercent = summary.totalAssets > 0 || summary.totalDebts > 0 ?
-                    (summary.totalDebts / (summary.totalAssets + summary.totalDebts || 1) * 100) : 0;
-                const assetPercent = 100 - debtPercent;
+                const totalSum = summary.totalAssets + summary.totalDebts;
+                const assetPercent = totalSum > 0 ? (summary.totalAssets / totalSum) * 100 : 0;
+                const debtPercent = 100 - assetPercent;
 
                 const assetsList = summary.assets.map(a => `
                   <div class="detail-row">
                     <span class="detail-name">💳 ${a.name}</span>
-                    <span class="detail-amount positive">+${formatRub(a.amount)}</span>
+                    <span class="detail-amount positive">${formatRub(a.amount)}</span>
                   </div>`).join('');
 
                 const debtsList = summary.debts.map(d => `
@@ -667,10 +686,6 @@
                     <span class="detail-name">🔴 ${d.name}</span>
                     <span class="detail-amount negative">−${formatRub(d.amount)}</span>
                   </div>`).join('');
-
-                const progressBarColor = debtPercent > 60 ? '#ff4757' : debtPercent > 30 ? '#ff9f43' :
-                    '#00c897';
-                const progressBarAssetColor = '#00c897';
 
                 return `
                 <div class="bank-card" data-bank-id="${summary.id}" data-index="${index}">
@@ -705,26 +720,22 @@
 
             banksListContainer.innerHTML = totals.bankSummaries.map((s, i) => renderBankCard(s, i)).join('');
 
-            // ============ РАСКРЫТИЕ/ЗАКРЫТИЕ КАРТОЧЕК ============
             window.toggleBank = function(headerEl) {
                 const card = headerEl.parentElement;
                 const wasExpanded = card.classList.contains('expanded');
-                // Закрыть все
                 document.querySelectorAll('.bank-card').forEach(c => c.classList.remove('expanded'));
-                // Открыть текущую, если была закрыта
                 if (!wasExpanded) {
                     card.classList.add('expanded');
                     card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
                 }
             };
 
-            // По умолчанию раскрываем первый банк для наглядности
             setTimeout(() => {
                 const firstCard = document.querySelector('.bank-card');
                 if (firstCard) firstCard.classList.add('expanded');
             }, 100);
 
-            console.log('✅ FinBoard прототип загружен!');
+            console.log('✅ FinBoard прототип обновлён!');
             console.log('📊 Всего банков:', totals.bankSummaries.length);
             console.log('💎 Чистый баланс:', formatRub(totals.netWorth));
             console.log('🟢 Активы:', formatRub(totals.totalAssets));
