@@ -2,272 +2,416 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VK Top Post Finder</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Taptic Engine тест · iPhone</title>
     <style>
+        :root {
+            --bg: #0b0b0f;
+            --surface: #1c1c24;
+            --surface-light: #2a2a33;
+            --text: #f5f5f7;
+            --text-secondary: #98989f;
+            --accent: #0a84ff;
+            --accent-glow: rgba(10, 132, 255, 0.6);
+            --green: #30d158;
+            --red: #ff453a;
+            --yellow: #ffd60a;
+            --border-radius: 28px;
+            --transition: 0.2s cubic-bezier(0.25, 0.1, 0.25, 1);
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-touch-callout: none;
+            font-family: -apple-system, 'SF Pro Display', 'SF Pro Text', 'Inter', 'Helvetica Neue', sans-serif;
         }
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #4a76a8 0%, #2b4a6f 100%);
+            background: var(--bg);
             min-height: 100vh;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             padding: 20px;
+            color: var(--text);
+            background-image: radial-gradient(circle at 20% 20%, #1a1a22 0%, #0b0b0f 70%);
         }
+
         .container {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            padding: 40px;
-            max-width: 800px;
+            max-width: 480px;
             width: 100%;
+            background: var(--surface);
+            border-radius: 40px;
+            padding: 32px 24px 28px;
+            box-shadow: 0 30px 50px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.03) inset;
+            backdrop-filter: blur(2px);
+            margin-bottom: 24px;
         }
+
         h1 {
-            color: #4a76a8;
+            font-size: 2rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin-bottom: 6px;
             text-align: center;
-            margin-bottom: 30px;
-            font-size: 2.2em;
+            color: var(--text);
         }
-        .input-group {
+
+        .subhead {
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            margin-bottom: 28px;
+            font-weight: 400;
+            letter-spacing: 0.01em;
+        }
+
+        .test-grid {
             display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
+            flex-direction: column;
+            gap: 14px;
         }
-        input {
-            flex: 1;
-            padding: 15px 20px;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            font-size: 16px;
-            transition: all 0.3s;
-        }
-        input:focus {
-            outline: none;
-            border-color: #4a76a8;
-            box-shadow: 0 0 0 3px rgba(74, 118, 168, 0.1);
-        }
-        button {
-            padding: 15px 30px;
-            background: #4a76a8;
-            color: white;
+
+        .test-btn {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--surface-light);
             border: none;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: bold;
+            border-radius: var(--border-radius);
+            padding: 18px 20px;
+            width: 100%;
+            font-size: 1.15rem;
+            font-weight: 500;
+            color: var(--text);
             cursor: pointer;
-            transition: all 0.3s;
+            transition: var(--transition);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            letter-spacing: -0.01em;
         }
-        button:hover {
-            background: #3d6290;
-            transform: translateY(-1px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+
+        .test-btn:active {
+            transform: scale(0.97);
+            background: #30303a;
+            border-color: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
         }
-        button:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-            transform: none;
+
+        .btn-icon {
+            font-size: 1.5rem;
+            filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.2));
         }
-        .result {
-            background: #f8f9fa;
-            border-radius: 15px;
-            padding: 25px;
-            margin-top: 20px;
-        }
-        .post-content {
-            font-size: 18px;
-            line-height: 1.6;
-            margin-bottom: 15px;
-            word-wrap: break-word;
-        }
-        .stats {
+
+        .intensity-indicator {
             display: flex;
-            gap: 20px;
-            color: #666;
+            gap: 8px;
+            align-items: center;
         }
-        .likes-count {
-            color: #e74c3c;
-            font-weight: bold;
-            font-size: 20px;
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--text-secondary);
+            transition: 0.1s;
         }
-        .error {
-            color: #e74c3c;
+        .dot.active {
+            background: var(--accent);
+            box-shadow: 0 0 8px var(--accent-glow);
+        }
+
+        .stop-btn {
+            background: #2c1e1e;
+            border: 1px solid rgba(255, 69, 58, 0.4);
+            color: #ff8a80;
+            margin-top: 10px;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+            justify-content: center;
+            gap: 10px;
+        }
+        .stop-btn:active {
+            background: #3a2020;
+        }
+
+        .status-area {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 18px;
+            padding: 14px;
+            border-radius: 22px;
+            background: rgba(0, 0, 0, 0.4);
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--green);
+            box-shadow: 0 0 8px var(--green);
+            transition: 0.2s;
+        }
+        .status-dot.error {
+            background: var(--red);
+            box-shadow: 0 0 8px var(--red);
+        }
+
+        .footnote {
+            color: var(--text-secondary);
+            font-size: 0.75rem;
             text-align: center;
-            margin-top: 20px;
-            padding: 15px;
-            background: #ffeaea;
-            border-radius: 10px;
+            margin-top: 16px;
+            opacity: 0.7;
+            letter-spacing: 0.02em;
         }
-        .loading {
-            text-align: center;
-            color: #4a76a8;
-            margin-top: 20px;
-            display: none;
-        }
-        .post-link {
-            color: #4a76a8;
-            text-decoration: none;
-            font-weight: bold;
-        }
-        .post-link:hover {
-            text-decoration: underline;
-        }
-        .token-notice {
-            font-size: 14px;
-            color: #888;
-            margin-top: 20px;
-            text-align: center;
+
+        @media (max-width: 400px) {
+            .container {
+                padding: 24px 16px 20px;
+                border-radius: 32px;
+            }
+            .test-btn {
+                padding: 16px 18px;
+                font-size: 1rem;
+            }
+            h1 {
+                font-size: 1.7rem;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🔍 Самый популярный пост VK</h1>
-        
-        <div class="input-group">
-            <input type="text" id="groupId" placeholder="Введите ID группы (например: 123456 или club_name)" />
-            <button onclick="findTopPost()" id="searchBtn">Найти</button>
+        <h1>⚡️ Taptic Engine</h1>
+        <div class="subhead">Проверка виброотклика iPhone</div>
+
+        <div class="test-grid">
+            <!-- Лёгкая вибрация -->
+            <button class="test-btn" data-pattern="light" data-duration="10">
+                <span>🫧 Лёгкий отклик</span>
+                <span class="btn-icon">▎</span>
+            </button>
+            
+            <!-- Средняя вибрация (одна) -->
+            <button class="test-btn" data-pattern="medium" data-duration="40">
+                <span>🔔 Средний сигнал</span>
+                <span class="btn-icon">◉</span>
+            </button>
+
+            <!-- Сильная вибрация (двойной пульс) -->
+            <button class="test-btn" data-pattern="strong" data-duration="25">
+                <span>💥 Сильный удар</span>
+                <span class="btn-icon">◍</span>
+            </button>
+
+            <!-- Специальный ритм: SOS -->
+            <button class="test-btn" data-pattern="sos" data-duration="150">
+                <span>🆘 Ритм SOS</span>
+                <span class="btn-icon">⋯</span>
+            </button>
+
+            <!-- Длинная непрерывная вибрация (2 сек) -->
+            <button class="test-btn" data-pattern="continuous" data-duration="2000">
+                <span>📳 Непрерывная вибрация</span>
+                <span class="btn-icon">≡</span>
+            </button>
+
+            <!-- Случайный паттерн (короткие серии) -->
+            <button class="test-btn" data-pattern="random" data-duration="300">
+                <span>🎲 Случайный паттерн</span>
+                <span class="btn-icon">✦</span>
+            </button>
         </div>
-        
-        <div class="loading" id="loading">⏳ Анализируем посты...</div>
-        <div class="error" id="error" style="display: none;"></div>
-        <div class="result" id="result" style="display: none;"></div>
-        
-        <div class="token-notice">
-            ⚠️ Для работы нужен сервисный ключ доступа VK API. 
-            <a href="https://vk.com/dev" target="_blank" style="color: #4a76a8;">Получить ключ</a>
+
+        <!-- Кнопка остановки -->
+        <button class="test-btn stop-btn" id="stopBtn">
+            <span>⏹ Остановить вибрацию</span>
+        </button>
+
+        <!-- Статус и информация о поддержке -->
+        <div class="status-area" id="statusArea">
+            <span class="status-dot" id="statusDot"></span>
+            <span id="statusText">Готов к тесту · используйте кнопки</span>
+        </div>
+        <div class="footnote">
+            iOS поддерживает вибрацию через Web Vibration API<br>Работает на iPhone и iPad
         </div>
     </div>
 
     <script>
-        // Замените на ваш сервисный ключ VK API
-        const VK_API_KEY = 'YOUR_SERVICE_TOKEN'; // Получите на vk.com/dev
-        
-        async function findTopPost() {
-            const groupId = document.getElementById('groupId').value.trim();
-            const resultDiv = document.getElementById('result');
-            const errorDiv = document.getElementById('error');
-            const loadingDiv = document.getElementById('loading');
-            const searchBtn = document.getElementById('searchBtn');
+        (function() {
+            // Проверка поддержки Vibration API
+            const supportsVibration = 'vibrate' in navigator || 'webkitVibrate' in navigator;
+            const statusDot = document.getElementById('statusDot');
+            const statusText = document.getElementById('statusText');
+            const stopBtn = document.getElementById('stopBtn');
             
-            // Сброс состояний
-            resultDiv.style.display = 'none';
-            errorDiv.style.display = 'none';
-            
-            if (!groupId) {
-                showError('Введите ID группы');
-                return;
+            // Для надёжности используем и стандартный и префиксный
+            const vibrate = (pattern) => {
+                if (navigator.vibrate) {
+                    return navigator.vibrate(pattern);
+                } else if (navigator.webkitVibrate) {
+                    return navigator.webkitVibrate(pattern);
+                } else {
+                    return false;
+                }
+            };
+
+            // Обновляем статус в зависимости от поддержки
+            function updateStatus(support) {
+                if (!support) {
+                    statusDot.classList.add('error');
+                    statusText.textContent = '⚠️ Vibration API не поддерживается на этом устройстве';
+                    return false;
+                } else {
+                    statusDot.classList.remove('error');
+                    statusText.textContent = '✅ Вибрация поддерживается · нажмите кнопку';
+                    return true;
+                }
             }
+
+            const vibrationSupported = updateStatus(supportsVibration);
             
-            if (VK_API_KEY === 'YOUR_SERVICE_TOKEN') {
-                showError('Замените YOUR_SERVICE_TOKEN на ваш реальный ключ VK API');
-                return;
-            }
-            
-            loadingDiv.style.display = 'block';
-            searchBtn.disabled = true;
-            
-            try {
-                // Получаем ID группы (если передан screen_name)
-                const groupRes = await fetch(`https://api.vk.com/method/groups.getById?v=5.131&group_id=${groupId}&access_token=${VK_API_KEY}`);
-                const groupData = await groupRes.json();
-                
-                if (groupData.error) {
-                    throw new Error(`Ошибка: ${groupData.error.error_msg}`);
-                }
-                
-                const ownerId = -groupData.response[0].id; // Для групп owner_id отрицательный
-                
-                // Получаем посты со стены
-                let allPosts = [];
-                let offset = 0;
-                const count = 100; // Максимум 100 за раз
-                let hasMore = true;
-                
-                while (hasMore && offset < 500) { // Ограничим 500 постами
-                    const wallRes = await fetch(
-                        `https://api.vk.com/method/wall.get?v=5.131&owner_id=${ownerId}&count=${count}&offset=${offset}&access_token=${VK_API_KEY}`
-                    );
-                    const wallData = await wallRes.json();
-                    
-                    if (wallData.error) {
-                        throw new Error(`Ошибка получения постов: ${wallData.error.error_msg}`);
-                    }
-                    
-                    const posts = wallData.response.items;
-                    allPosts = allPosts.concat(posts);
-                    
-                    if (posts.length < count) {
-                        hasMore = false;
-                    } else {
-                        offset += count;
-                    }
-                }
-                
-                if (allPosts.length === 0) {
-                    throw new Error('В этой группе нет постов');
-                }
-                
-                // Находим пост с максимальным количеством лайков
-                const topPost = allPosts.reduce((max, post) => {
-                    return (post.likes.count > max.likes.count) ? post : max;
+            // Если поддержки нет – делаем кнопки неактивными (визуально и функционально)
+            const testButtons = document.querySelectorAll('.test-btn[data-pattern]');
+            if (!vibrationSupported) {
+                testButtons.forEach(btn => {
+                    btn.style.opacity = '0.5';
+                    btn.style.pointerEvents = 'none';
                 });
-                
-                // Отображаем результат
-                displayResult(topPost, groupData.response[0]);
-                
-            } catch (error) {
-                showError(error.message);
-            } finally {
-                loadingDiv.style.display = 'none';
-                searchBtn.disabled = false;
+            } else {
+                // Привязываем обработчики только если поддерживается
+                testButtons.forEach(btn => {
+                    btn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const patternType = this.dataset.pattern;
+                        const duration = parseInt(this.dataset.duration, 10) || 50;
+                        
+                        // Останавливаем любую текущую вибрацию перед запуском новой
+                        vibrate(0); // немедленная остановка
+                        
+                        let vibrationPattern = duration; // по умолчанию просто число (мс)
+                        
+                        switch (patternType) {
+                            case 'light':
+                                // короткий мягкий импульс 10мс (Taptic Engine лёгкий)
+                                vibrationPattern = 10;
+                                break;
+                            case 'medium':
+                                // средний одиночный удар 40мс
+                                vibrationPattern = 40;
+                                break;
+                            case 'strong':
+                                // Сильный ощутимый удар – два коротких импульса подряд
+                                vibrationPattern = [25, 30, 25]; // вибрация 25мс, пауза 30мс, вибрация 25мс
+                                break;
+                            case 'sos':
+                                // Ритм SOS: три коротких, три длинных, три коротких (с паузами)
+                                vibrationPattern = [
+                                    120, 80, 120, 80, 120,   // S: три коротких
+                                    200,                     // пауза между буквами
+                                    300, 80, 300, 80, 300,   // O: три длинных
+                                    200,                     // пауза
+                                    120, 80, 120, 80, 120    // S снова
+                                ];
+                                break;
+                            case 'continuous':
+                                // длинная непрерывная вибрация 2000 мс
+                                vibrationPattern = 2000;
+                                break;
+                            case 'random':
+                                // случайный паттерн: несколько коротких всплесков
+                                vibrationPattern = [
+                                    30, 50, 30, 50, 40, 
+                                    80, 30, 60, 30, 
+                                    100, 70, 30, 40, 20
+                                ];
+                                break;
+                            default:
+                                vibrationPattern = duration;
+                        }
+                        
+                        // Запускаем вибрацию
+                        const result = vibrate(vibrationPattern);
+                        
+                        if (result) {
+                            // Обновляем статус
+                            statusDot.classList.remove('error');
+                            statusText.textContent = `▶️ Вибрация: ${getPatternName(patternType)}`;
+                            
+                            // Показываем активную точку индикатора (для наглядности, без реального UI)
+                            // Дополнительно можно подсветить, но не обязательно
+                        } else {
+                            statusDot.classList.add('error');
+                            statusText.textContent = '❌ Не удалось запустить вибрацию (API заблокирован?)';
+                        }
+                    });
+                });
             }
-        }
-        
-        function displayResult(post, group) {
-            const resultDiv = document.getElementById('result');
-            const postUrl = `https://vk.com/wall${post.owner_id}_${post.id}`;
-            const date = new Date(post.date * 1000).toLocaleDateString('ru-RU');
-            
-            resultDiv.innerHTML = `
-                <div class="post-content">
-                    ${post.text ? post.text.substring(0, 500) : '📷 Пост без текста'}
-                    ${post.text && post.text.length > 500 ? '...' : ''}
-                </div>
-                <div class="stats">
-                    <span class="likes-count">❤️ ${post.likes.count.toLocaleString()} лайков</span>
-                    <span>💬 ${post.comments.count.toLocaleString()} комментариев</span>
-                    <span>🔄 ${post.reposts.count.toLocaleString()} репостов</span>
-                    <span>👁️ ${post.views ? post.views.count.toLocaleString() : '0'} просмотров</span>
-                </div>
-                <p style="margin-top: 15px;">
-                    📅 Опубликовано: ${date} | 
-                    <a href="${postUrl}" target="_blank" class="post-link">Открыть пост →</a>
-                </p>
-                <p style="color: #888; margin-top: 10px;">
-                    Группа: ${group.name} | Проанализировано постов: ${document.querySelector('.stats') ? 'много' : '0'}
-                </p>
-            `;
-            
-            resultDiv.style.display = 'block';
-        }
-        
-        function showError(message) {
-            const errorDiv = document.getElementById('error');
-            errorDiv.textContent = '❌ ' + message;
-            errorDiv.style.display = 'block';
-        }
-        
-        // Поддержка Enter для поиска
-        document.getElementById('groupId').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                findTopPost();
+
+            // Функция для человекочитаемого имени паттерна
+            function getPatternName(type) {
+                const names = {
+                    'light': 'лёгкий',
+                    'medium': 'средний',
+                    'strong': 'сильный',
+                    'sos': 'SOS',
+                    'continuous': 'непрерывный',
+                    'random': 'случайный'
+                };
+                return names[type] || type;
             }
-        });
+
+            // Кнопка остановки вибрации
+            stopBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                if (supportsVibration) {
+                    vibrate(0); // останавливает вибрацию
+                    statusDot.classList.remove('error');
+                    statusText.textContent = '⏹️ Вибрация остановлена';
+                } else {
+                    statusDot.classList.add('error');
+                    statusText.textContent = '⚠️ Нет поддержки вибрации';
+                }
+            });
+
+            // Дополнительно: остановка при уходе со страницы (visibilitychange)
+            document.addEventListener('visibilitychange', function() {
+                if (document.hidden && supportsVibration) {
+                    vibrate(0);
+                }
+            });
+
+            // Предотвращаем двойной тап, но оставляем ощущение нажатия
+            document.addEventListener('touchstart', function(e) {
+                // Просто для предотвращения выделения
+            }, { passive: true });
+
+            // Инициализация статуса
+            if (!supportsVibration) {
+                statusDot.classList.add('error');
+                statusText.textContent = '⚠️ Vibration API не найден';
+            } else {
+                statusDot.classList.remove('error');
+                statusText.textContent = '✅ Taptic Engine готов';
+            }
+        })();
     </script>
 </body>
 </html>
