@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Покерный банк — подсчёт фишек</title>
+    <title>Покерный банк — капитал и ставки</title>
     <style>
         :root {
             --felt: #1a5c2a;
@@ -173,6 +173,26 @@
             box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.3);
         }
 
+        .player-capital {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #5a4a3a;
+            background: #f0e8d8;
+            padding: 6px 12px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+        }
+
+        .player-capital .capital-value {
+            font-weight: 800;
+            color: #1a3a1a;
+            font-size: 1.1rem;
+            margin-left: 4px;
+        }
+
         .chip-buttons {
             display: flex;
             flex-wrap: wrap;
@@ -208,20 +228,20 @@
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         }
 
-        .chip-btn.chip-10 {
+        .chip-btn.chip-1 {
             background: linear-gradient(135deg, #e67e22, #d35400);
         }
-        .chip-btn.chip-25 {
+        .chip-btn.chip-2 {
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+        }
+        .chip-btn.chip-5 {
             background: linear-gradient(135deg, #e74c3c, #c0392b);
         }
-        .chip-btn.chip-50 {
+        .chip-btn.chip-10 {
             background: linear-gradient(135deg, #8e44ad, #6c3483);
         }
-        .chip-btn.chip-100 {
+        .chip-btn.chip-50 {
             background: linear-gradient(135deg, #2ecc71, #1e8449);
-        }
-        .chip-btn.chip-500 {
-            background: linear-gradient(135deg, #3498db, #1f618d);
         }
 
         .custom-bet {
@@ -558,7 +578,7 @@
                 Покерный банк
                 <span class="icon">🃏</span>
             </h1>
-            <p class="subtitle">Подсчёт фишек для двух игроков · Скидывайте в банк и забирайте выигрыш</p>
+            <p class="subtitle">Капитал 1000 · Ставки уменьшены в 10 раз · Скидывайте в банк и забирайте выигрыш</p>
         </div>
 
         <!-- Основная игровая зона -->
@@ -568,16 +588,19 @@
                 <div class="player-header">
                     <div class="player-avatar p1" id="avatar1">1</div>
                     <input class="player-name-input" id="name1" type="text" value="Игрок 1" maxlength="20" placeholder="Имя игрока 1">
+                    <div class="player-capital">
+                        💰 Капитал: <span class="capital-value" id="capital1">1000</span>
+                    </div>
                 </div>
                 <div class="chip-buttons">
+                    <button class="chip-btn chip-1" data-player="1" data-amount="1">1</button>
+                    <button class="chip-btn chip-2" data-player="1" data-amount="2.5">2.5</button>
+                    <button class="chip-btn chip-5" data-player="1" data-amount="5">5</button>
                     <button class="chip-btn chip-10" data-player="1" data-amount="10">10</button>
-                    <button class="chip-btn chip-25" data-player="1" data-amount="25">25</button>
                     <button class="chip-btn chip-50" data-player="1" data-amount="50">50</button>
-                    <button class="chip-btn chip-100" data-player="1" data-amount="100">100</button>
-                    <button class="chip-btn chip-500" data-player="1" data-amount="500">500</button>
                 </div>
                 <div class="custom-bet">
-                    <input type="number" id="custom1" placeholder="Своя сумма" min="1" step="1">
+                    <input type="number" id="custom1" placeholder="Своя ставка" min="0.1" step="0.1">
                     <button id="custom-btn1" data-player="1">В банк</button>
                 </div>
                 <button class="take-bank-btn p1" id="take1" disabled>💰 Забрать банк</button>
@@ -588,16 +611,19 @@
                 <div class="player-header">
                     <div class="player-avatar p2" id="avatar2">2</div>
                     <input class="player-name-input" id="name2" type="text" value="Игрок 2" maxlength="20" placeholder="Имя игрока 2">
+                    <div class="player-capital">
+                        💰 Капитал: <span class="capital-value" id="capital2">1000</span>
+                    </div>
                 </div>
                 <div class="chip-buttons">
+                    <button class="chip-btn chip-1" data-player="2" data-amount="1">1</button>
+                    <button class="chip-btn chip-2" data-player="2" data-amount="2.5">2.5</button>
+                    <button class="chip-btn chip-5" data-player="2" data-amount="5">5</button>
                     <button class="chip-btn chip-10" data-player="2" data-amount="10">10</button>
-                    <button class="chip-btn chip-25" data-player="2" data-amount="25">25</button>
                     <button class="chip-btn chip-50" data-player="2" data-amount="50">50</button>
-                    <button class="chip-btn chip-100" data-player="2" data-amount="100">100</button>
-                    <button class="chip-btn chip-500" data-player="2" data-amount="500">500</button>
                 </div>
                 <div class="custom-bet">
-                    <input type="number" id="custom2" placeholder="Своя сумма" min="1" step="1">
+                    <input type="number" id="custom2" placeholder="Своя ставка" min="0.1" step="0.1">
                     <button id="custom-btn2" data-player="2">В банк</button>
                 </div>
                 <button class="take-bank-btn p2" id="take2" disabled>💰 Забрать банк</button>
@@ -671,6 +697,9 @@
                 // Имена
                 player1Name: 'Игрок 1',
                 player2Name: 'Игрок 2',
+                // Капитал (стартовый 1000)
+                capital1: 1000,
+                capital2: 1000,
                 // Текущие взносы в банк (не сброшенные)
                 currentContrib1: 0,
                 currentContrib2: 0,
@@ -708,6 +737,8 @@
             const custom2Input = document.getElementById('custom2');
             const avatar1 = document.getElementById('avatar1');
             const avatar2 = document.getElementById('avatar2');
+            const capital1El = document.getElementById('capital1');
+            const capital2El = document.getElementById('capital2');
 
             // ---------- Вспомогательные функции ----------
             function saveUndo() {
@@ -722,6 +753,8 @@
             function restoreState(snapshot) {
                 state.player1Name = snapshot.player1Name;
                 state.player2Name = snapshot.player2Name;
+                state.capital1 = snapshot.capital1;
+                state.capital2 = snapshot.capital2;
                 state.currentContrib1 = snapshot.currentContrib1;
                 state.currentContrib2 = snapshot.currentContrib2;
                 state.bank = snapshot.bank;
@@ -734,7 +767,8 @@
             }
 
             function formatAmount(num) {
-                return num.toLocaleString('ru-RU');
+                // отображаем с одним десятичным знаком, если дробная часть не целая
+                return Number(num.toFixed(1)).toLocaleString('ru-RU');
             }
 
             function updateUI() {
@@ -754,6 +788,10 @@
                 stat2Title.textContent = `👤 ${state.player2Name}`;
                 avatar1.textContent = state.player1Name.charAt(0).toUpperCase() || '1';
                 avatar2.textContent = state.player2Name.charAt(0).toUpperCase() || '2';
+
+                // Капиталы
+                capital1El.textContent = formatAmount(state.capital1);
+                capital2El.textContent = formatAmount(state.capital2);
 
                 // Статистика
                 totalContrib1El.textContent = formatAmount(state.totalContrib1);
@@ -804,13 +842,26 @@
 
             // ---------- Действия ----------
             function addToBank(player, amount) {
+                // Проверка на корректность
                 if (amount <= 0 || isNaN(amount)) return;
+                // Проверка на достаточность капитала
+                if (player === 1 && state.capital1 < amount) {
+                    alert(`${state.player1Name}: недостаточно капитала! Доступно ${formatAmount(state.capital1)}`);
+                    return;
+                }
+                if (player === 2 && state.capital2 < amount) {
+                    alert(`${state.player2Name}: недостаточно капитала! Доступно ${formatAmount(state.capital2)}`);
+                    return;
+                }
+
                 saveUndo();
                 if (player === 1) {
+                    state.capital1 -= amount;
                     state.currentContrib1 += amount;
                     state.totalContrib1 += amount;
                     state.bank += amount;
                 } else if (player === 2) {
+                    state.capital2 -= amount;
                     state.currentContrib2 += amount;
                     state.totalContrib2 += amount;
                     state.bank += amount;
@@ -832,8 +883,10 @@
                 };
                 state.history.push(record);
                 if (player === 1) {
+                    state.capital1 += state.bank;
                     state.totalWin1 += state.bank;
                 } else if (player === 2) {
+                    state.capital2 += state.bank;
                     state.totalWin2 += state.bank;
                 }
                 // Сбрасываем текущий банк и текущие взносы
@@ -847,17 +900,17 @@
                 if (state.undoStack.length === 0) return;
                 const snapshot = state.undoStack.pop();
                 restoreState(snapshot);
-                // После восстановления обновляем UI, но не перезаписываем undoStack (он уже изменён pop)
-                // Однако restoreState не трогает undoStack, так что всё ок.
-                // Но нужно обновить DOM поля ввода имён, если они были изменены
+                // После восстановления обновляем UI
                 updateUI();
             }
 
             function resetGame() {
-                if (confirm('Начать новую игру? Вся история и статистика будут сброшены.')) {
+                if (confirm('Начать новую игру? Капитал обоих игроков будет сброшен к 1000, история и статистика очищены.')) {
                     saveUndo();
                     state.player1Name = 'Игрок 1';
                     state.player2Name = 'Игрок 2';
+                    state.capital1 = 1000;
+                    state.capital2 = 1000;
                     state.currentContrib1 = 0;
                     state.currentContrib2 = 0;
                     state.bank = 0;
@@ -873,7 +926,7 @@
 
             function clearHistory() {
                 if (state.history.length === 0) return;
-                if (confirm('Очистить историю раздач? Статистика останется.')) {
+                if (confirm('Очистить историю раздач? Статистика и капиталы останутся.')) {
                     saveUndo();
                     state.history = [];
                     updateUI();
@@ -899,14 +952,14 @@
             document.querySelectorAll('.chip-btn').forEach(btn => {
                 btn.addEventListener('click', () => {
                     const player = parseInt(btn.dataset.player);
-                    const amount = parseInt(btn.dataset.amount);
+                    const amount = parseFloat(btn.dataset.amount); // поддержка 2.5
                     addToBank(player, amount);
                 });
             });
 
             // Кнопки "В банк" для произвольной суммы
             document.getElementById('custom-btn1').addEventListener('click', () => {
-                const amount = parseInt(custom1Input.value);
+                const amount = parseFloat(custom1Input.value);
                 if (amount > 0) {
                     addToBank(1, amount);
                     custom1Input.value = '';
@@ -915,7 +968,7 @@
                 }
             });
             document.getElementById('custom-btn2').addEventListener('click', () => {
-                const amount = parseInt(custom2Input.value);
+                const amount = parseFloat(custom2Input.value);
                 if (amount > 0) {
                     addToBank(2, amount);
                     custom2Input.value = '';
