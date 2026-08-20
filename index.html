@@ -2,415 +2,951 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Taptic Engine тест · iPhone</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Покерный банк — подсчёт фишек</title>
     <style>
         :root {
-            --bg: #0b0b0f;
-            --surface: #1c1c24;
-            --surface-light: #2a2a33;
-            --text: #f5f5f7;
-            --text-secondary: #98989f;
-            --accent: #0a84ff;
-            --accent-glow: rgba(10, 132, 255, 0.6);
-            --green: #30d158;
-            --red: #ff453a;
-            --yellow: #ffd60a;
-            --border-radius: 28px;
-            --transition: 0.2s cubic-bezier(0.25, 0.1, 0.25, 1);
+            --felt: #1a5c2a;
+            --felt-dark: #0e3d1a;
+            --gold: #d4af37;
+            --gold-light: #f0d060;
+            --chip-red: #c0392b;
+            --chip-blue: #2980b9;
+            --chip-green: #27ae60;
+            --chip-black: #2c3e50;
+            --cream: #fdf5e6;
+            --dark-text: #2c2c2c;
+            --shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+            --radius: 16px;
+            --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-            user-select: none;
-            -webkit-user-select: none;
-            -webkit-touch-callout: none;
-            font-family: -apple-system, 'SF Pro Display', 'SF Pro Text', 'Inter', 'Helvetica Neue', sans-serif;
         }
 
         body {
-            background: var(--bg);
+            font-family: 'Segoe UI', 'Roboto', system-ui, sans-serif;
+            background: radial-gradient(ellipse at center, #1e3c2a 0%, #0a1f12 100%);
             min-height: 100vh;
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
             padding: 20px;
-            color: var(--text);
-            background-image: radial-gradient(circle at 20% 20%, #1a1a22 0%, #0b0b0f 70%);
+            color: var(--dark-text);
         }
 
-        .container {
-            max-width: 480px;
+        .app {
             width: 100%;
-            background: var(--surface);
-            border-radius: 40px;
-            padding: 32px 24px 28px;
-            box-shadow: 0 30px 50px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.03) inset;
-            backdrop-filter: blur(2px);
+            max-width: 1100px;
+            background: linear-gradient(145deg, #f8f0e0, #e8dcc8);
+            border-radius: 24px;
+            box-shadow: var(--shadow), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+            padding: 28px 24px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .app::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 8px;
+            background: linear-gradient(90deg, var(--gold), #b8860b, var(--gold));
+            border-radius: 24px 24px 0 0;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 28px;
+            position: relative;
+        }
+
+        .header h1 {
+            font-size: clamp(1.8rem, 4vw, 2.8rem);
+            font-weight: 900;
+            color: #1a3a1a;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .header h1 .icon {
+            font-size: 2.5rem;
+        }
+
+        .subtitle {
+            color: #5a4a3a;
+            font-size: 0.95rem;
+            margin-top: 4px;
+            font-weight: 500;
+        }
+
+        .game-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
             margin-bottom: 24px;
         }
 
-        h1 {
-            font-size: 2rem;
-            font-weight: 700;
-            letter-spacing: -0.02em;
-            margin-bottom: 6px;
-            text-align: center;
-            color: var(--text);
+        @media (max-width: 700px) {
+            .game-container {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+            .app {
+                padding: 20px 14px;
+                border-radius: 18px;
+            }
         }
 
-        .subhead {
-            text-align: center;
-            color: var(--text-secondary);
-            font-size: 0.95rem;
-            margin-bottom: 28px;
-            font-weight: 400;
-            letter-spacing: 0.01em;
-        }
-
-        .test-grid {
+        .player-card {
+            background: linear-gradient(160deg, #ffffff, #f5efe6);
+            border-radius: var(--radius);
+            padding: 20px 18px;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15), inset 0 1px 0 #fff;
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            transition: var(--transition);
             display: flex;
             flex-direction: column;
-            gap: 14px;
         }
 
-        .test-btn {
+        .player-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.25);
+        }
+
+        .player-header {
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            background: var(--surface-light);
+            gap: 12px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+
+        .player-avatar {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #fff;
+            flex-shrink: 0;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border: 2px solid #fff;
+        }
+
+        .player-avatar.p1 {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+        }
+        .player-avatar.p2 {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+        }
+
+        .player-name-input {
+            flex: 1;
+            min-width: 120px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            padding: 10px 14px;
+            border: 2px solid #ddd0b8;
+            border-radius: 12px;
+            background: #fffdf9;
+            color: #2c2c2c;
+            outline: none;
+            transition: var(--transition);
+        }
+
+        .player-name-input:focus {
+            border-color: var(--gold);
+            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.3);
+        }
+
+        .chip-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 14px;
+            justify-content: center;
+        }
+
+        .chip-btn {
+            padding: 10px 14px;
             border: none;
-            border-radius: var(--border-radius);
-            padding: 18px 20px;
-            width: 100%;
-            font-size: 1.15rem;
-            font-weight: 500;
-            color: var(--text);
+            border-radius: 50px;
+            font-weight: 800;
+            font-size: 0.9rem;
             cursor: pointer;
             transition: var(--transition);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.04);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            letter-spacing: -0.01em;
+            letter-spacing: 0.5px;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #fff;
+            text-transform: uppercase;
+            flex: 0 0 auto;
         }
 
-        .test-btn:active {
-            transform: scale(0.97);
-            background: #30303a;
-            border-color: rgba(255, 255, 255, 0.1);
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
+        .chip-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 14px rgba(0, 0, 0, 0.25);
+        }
+        .chip-btn:active {
+            transform: translateY(1px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         }
 
-        .btn-icon {
-            font-size: 1.5rem;
-            filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.2));
+        .chip-btn.chip-10 {
+            background: linear-gradient(135deg, #e67e22, #d35400);
+        }
+        .chip-btn.chip-25 {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+        }
+        .chip-btn.chip-50 {
+            background: linear-gradient(135deg, #8e44ad, #6c3483);
+        }
+        .chip-btn.chip-100 {
+            background: linear-gradient(135deg, #2ecc71, #1e8449);
+        }
+        .chip-btn.chip-500 {
+            background: linear-gradient(135deg, #3498db, #1f618d);
         }
 
-        .intensity-indicator {
+        .custom-bet {
             display: flex;
             gap: 8px;
-            align-items: center;
+            margin-top: 4px;
         }
 
-        .dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: var(--text-secondary);
-            transition: 0.1s;
-        }
-        .dot.active {
-            background: var(--accent);
-            box-shadow: 0 0 8px var(--accent-glow);
-        }
-
-        .stop-btn {
-            background: #2c1e1e;
-            border: 1px solid rgba(255, 69, 58, 0.4);
-            color: #ff8a80;
-            margin-top: 10px;
+        .custom-bet input {
+            flex: 1;
+            padding: 10px 12px;
+            border: 2px solid #ddd0b8;
+            border-radius: 12px;
+            font-size: 1rem;
             font-weight: 600;
-            letter-spacing: -0.01em;
-            justify-content: center;
-            gap: 10px;
+            outline: none;
+            background: #fffdf9;
+            transition: var(--transition);
+            min-width: 0;
         }
-        .stop-btn:active {
-            background: #3a2020;
+        .custom-bet input:focus {
+            border-color: var(--gold);
+            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.3);
+        }
+        .custom-bet button {
+            padding: 10px 16px;
+            border: none;
+            border-radius: 12px;
+            background: var(--gold);
+            color: #1a1a1a;
+            font-weight: 800;
+            cursor: pointer;
+            transition: var(--transition);
+            white-space: nowrap;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+        }
+        .custom-bet button:hover {
+            background: var(--gold-light);
+            transform: translateY(-1px);
         }
 
-        .status-area {
+        .take-bank-btn {
+            margin-top: auto;
+            padding: 14px 20px;
+            border: none;
+            border-radius: 14px;
+            font-weight: 900;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: var(--transition);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #fff;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 10px;
-            margin-top: 18px;
-            padding: 14px;
-            border-radius: 22px;
-            background: rgba(0, 0, 0, 0.4);
-            font-size: 0.95rem;
-            color: var(--text-secondary);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(5px);
-            -webkit-backdrop-filter: blur(5px);
+            width: 100%;
+        }
+        .take-bank-btn.p1 {
+            background: linear-gradient(135deg, #e74c3c, #a93226);
+        }
+        .take-bank-btn.p2 {
+            background: linear-gradient(135deg, #3498db, #1a5276);
+        }
+        .take-bank-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.35);
+        }
+        .take-bank-btn:active {
+            transform: translateY(1px);
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+        }
+        .take-bank-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
         }
 
-        .status-dot {
+        .bank-section {
+            background: linear-gradient(145deg, #2c3e50, #1a252f);
+            border-radius: var(--radius);
+            padding: 24px 20px;
+            text-align: center;
+            margin-bottom: 24px;
+            box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.5), 0 8px 24px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+            border: 2px solid rgba(212, 175, 55, 0.4);
+        }
+
+        .bank-section::after {
+            content: '♠ ♥ ♦ ♣';
+            position: absolute;
+            bottom: 8px;
+            right: 16px;
+            font-size: 1.4rem;
+            color: rgba(255, 255, 255, 0.1);
+            letter-spacing: 10px;
+            pointer-events: none;
+        }
+
+        .bank-label {
+            color: #bbb;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+        .bank-amount {
+            font-size: clamp(2.8rem, 8vw, 4.5rem);
+            font-weight: 900;
+            color: var(--gold-light);
+            text-shadow: 0 0 30px rgba(212, 175, 55, 0.5);
+            line-height: 1;
+            transition: var(--transition);
+        }
+        .bank-amount.pulse {
+            animation: pulse 0.4s ease;
+        }
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            40% {
+                transform: scale(1.08);
+                color: #fff;
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .bank-contributions {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 12px;
+            color: #ccc;
+            font-size: 0.9rem;
+            flex-wrap: wrap;
+        }
+        .bank-contributions span {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .bank-contributions .dot {
             width: 10px;
             height: 10px;
             border-radius: 50%;
-            background: var(--green);
-            box-shadow: 0 0 8px var(--green);
-            transition: 0.2s;
+            display: inline-block;
         }
-        .status-dot.error {
-            background: var(--red);
-            box-shadow: 0 0 8px var(--red);
+        .dot.p1-dot {
+            background: #e74c3c;
+        }
+        .dot.p2-dot {
+            background: #3498db;
         }
 
-        .footnote {
-            color: var(--text-secondary);
-            font-size: 0.75rem;
+        .stats-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+        @media (max-width: 600px) {
+            .stats-section {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 14px;
+            padding: 16px 18px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(4px);
+        }
+        .stat-card h3 {
+            font-size: 1rem;
+            color: #5a4a3a;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 700;
+        }
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            font-size: 0.95rem;
+        }
+        .stat-row:last-child {
+            border-bottom: none;
+        }
+        .stat-row .label {
+            color: #6a5a4a;
+            font-weight: 500;
+        }
+        .stat-row .value {
+            font-weight: 800;
+            color: #1a1a1a;
+        }
+        .stat-row .value.positive {
+            color: #1e8449;
+        }
+        .stat-row .value.negative {
+            color: #a93226;
+        }
+
+        .history-section {
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 14px;
+            padding: 16px 18px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(4px);
+            margin-bottom: 20px;
+        }
+        .history-section h3 {
+            font-size: 1rem;
+            color: #5a4a3a;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 700;
+        }
+        .history-list {
+            max-height: 180px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .history-item {
+            background: #fffdf9;
+            padding: 10px 14px;
+            border-radius: 10px;
+            font-size: 0.88rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            border-left: 4px solid var(--gold);
+        }
+        .history-item .winner {
+            font-weight: 800;
+            color: #1a5c2a;
+        }
+        .history-item .winner.p1-winner {
+            color: #a93226;
+        }
+        .history-item .winner.p2-winner {
+            color: #1a5276;
+        }
+        .history-empty {
             text-align: center;
-            margin-top: 16px;
-            opacity: 0.7;
-            letter-spacing: 0.02em;
+            color: #999;
+            font-style: italic;
+            padding: 20px;
         }
 
-        @media (max-width: 400px) {
-            .container {
-                padding: 24px 16px 20px;
-                border-radius: 32px;
-            }
-            .test-btn {
-                padding: 16px 18px;
-                font-size: 1rem;
-            }
-            h1 {
-                font-size: 1.7rem;
-            }
+        .actions-row {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .action-btn {
+            padding: 12px 22px;
+            border: none;
+            border-radius: 50px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.25);
+        }
+        .action-btn:active {
+            transform: translateY(1px);
+        }
+        .action-btn.reset {
+            background: linear-gradient(135deg, #ecf0f1, #bdc3c7);
+            color: #2c3e50;
+        }
+        .action-btn.undo {
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+            color: #fff;
+        }
+        .action-btn.clear-history {
+            background: linear-gradient(135deg, #95a5a6, #7f8c8d);
+            color: #fff;
+        }
+
+        /* Scrollbar styling */
+        .history-list::-webkit-scrollbar {
+            width: 6px;
+        }
+        .history-list::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 3px;
+        }
+        .history-list::-webkit-scrollbar-thumb {
+            background: #b8a88a;
+            border-radius: 3px;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>⚡️ Taptic Engine</h1>
-        <div class="subhead">Проверка виброотклика iPhone</div>
-
-        <div class="test-grid">
-            <!-- Лёгкая вибрация -->
-            <button class="test-btn" data-pattern="light" data-duration="10">
-                <span>🫧 Лёгкий отклик</span>
-                <span class="btn-icon">▎</span>
-            </button>
-            
-            <!-- Средняя вибрация (одна) -->
-            <button class="test-btn" data-pattern="medium" data-duration="40">
-                <span>🔔 Средний сигнал</span>
-                <span class="btn-icon">◉</span>
-            </button>
-
-            <!-- Сильная вибрация (двойной пульс) -->
-            <button class="test-btn" data-pattern="strong" data-duration="25">
-                <span>💥 Сильный удар</span>
-                <span class="btn-icon">◍</span>
-            </button>
-
-            <!-- Специальный ритм: SOS -->
-            <button class="test-btn" data-pattern="sos" data-duration="150">
-                <span>🆘 Ритм SOS</span>
-                <span class="btn-icon">⋯</span>
-            </button>
-
-            <!-- Длинная непрерывная вибрация (2 сек) -->
-            <button class="test-btn" data-pattern="continuous" data-duration="2000">
-                <span>📳 Непрерывная вибрация</span>
-                <span class="btn-icon">≡</span>
-            </button>
-
-            <!-- Случайный паттерн (короткие серии) -->
-            <button class="test-btn" data-pattern="random" data-duration="300">
-                <span>🎲 Случайный паттерн</span>
-                <span class="btn-icon">✦</span>
-            </button>
+    <div class="app">
+        <div class="header">
+            <h1>
+                <span class="icon">🃏</span>
+                Покерный банк
+                <span class="icon">🃏</span>
+            </h1>
+            <p class="subtitle">Подсчёт фишек для двух игроков · Скидывайте в банк и забирайте выигрыш</p>
         </div>
 
-        <!-- Кнопка остановки -->
-        <button class="test-btn stop-btn" id="stopBtn">
-            <span>⏹ Остановить вибрацию</span>
-        </button>
+        <!-- Основная игровая зона -->
+        <div class="game-container">
+            <!-- Игрок 1 -->
+            <div class="player-card" id="player1-card">
+                <div class="player-header">
+                    <div class="player-avatar p1" id="avatar1">1</div>
+                    <input class="player-name-input" id="name1" type="text" value="Игрок 1" maxlength="20" placeholder="Имя игрока 1">
+                </div>
+                <div class="chip-buttons">
+                    <button class="chip-btn chip-10" data-player="1" data-amount="10">10</button>
+                    <button class="chip-btn chip-25" data-player="1" data-amount="25">25</button>
+                    <button class="chip-btn chip-50" data-player="1" data-amount="50">50</button>
+                    <button class="chip-btn chip-100" data-player="1" data-amount="100">100</button>
+                    <button class="chip-btn chip-500" data-player="1" data-amount="500">500</button>
+                </div>
+                <div class="custom-bet">
+                    <input type="number" id="custom1" placeholder="Своя сумма" min="1" step="1">
+                    <button id="custom-btn1" data-player="1">В банк</button>
+                </div>
+                <button class="take-bank-btn p1" id="take1" disabled>💰 Забрать банк</button>
+            </div>
 
-        <!-- Статус и информация о поддержке -->
-        <div class="status-area" id="statusArea">
-            <span class="status-dot" id="statusDot"></span>
-            <span id="statusText">Готов к тесту · используйте кнопки</span>
+            <!-- Игрок 2 -->
+            <div class="player-card" id="player2-card">
+                <div class="player-header">
+                    <div class="player-avatar p2" id="avatar2">2</div>
+                    <input class="player-name-input" id="name2" type="text" value="Игрок 2" maxlength="20" placeholder="Имя игрока 2">
+                </div>
+                <div class="chip-buttons">
+                    <button class="chip-btn chip-10" data-player="2" data-amount="10">10</button>
+                    <button class="chip-btn chip-25" data-player="2" data-amount="25">25</button>
+                    <button class="chip-btn chip-50" data-player="2" data-amount="50">50</button>
+                    <button class="chip-btn chip-100" data-player="2" data-amount="100">100</button>
+                    <button class="chip-btn chip-500" data-player="2" data-amount="500">500</button>
+                </div>
+                <div class="custom-bet">
+                    <input type="number" id="custom2" placeholder="Своя сумма" min="1" step="1">
+                    <button id="custom-btn2" data-player="2">В банк</button>
+                </div>
+                <button class="take-bank-btn p2" id="take2" disabled>💰 Забрать банк</button>
+            </div>
         </div>
-        <div class="footnote">
-            iOS поддерживает вибрацию через Web Vibration API<br>Работает на iPhone и iPad
+
+        <!-- Банк -->
+        <div class="bank-section">
+            <div class="bank-label">Текущий банк</div>
+            <div class="bank-amount" id="bankAmount">0</div>
+            <div class="bank-contributions">
+                <span><span class="dot p1-dot"></span> <span id="contrib1">0</span></span>
+                <span><span class="dot p2-dot"></span> <span id="contrib2">0</span></span>
+            </div>
+        </div>
+
+        <!-- Статистика -->
+        <div class="stats-section">
+            <div class="stat-card" id="stat1-card">
+                <h3 id="stat1-title">👤 Игрок 1</h3>
+                <div class="stat-row">
+                    <span class="label">Всего вложено</span>
+                    <span class="value" id="total-contrib1">0</span>
+                </div>
+                <div class="stat-row">
+                    <span class="label">Всего выиграно</span>
+                    <span class="value" id="total-win1">0</span>
+                </div>
+                <div class="stat-row">
+                    <span class="label">Профит</span>
+                    <span class="value" id="profit1">0</span>
+                </div>
+            </div>
+            <div class="stat-card" id="stat2-card">
+                <h3 id="stat2-title">👤 Игрок 2</h3>
+                <div class="stat-row">
+                    <span class="label">Всего вложено</span>
+                    <span class="value" id="total-contrib2">0</span>
+                </div>
+                <div class="stat-row">
+                    <span class="label">Всего выиграно</span>
+                    <span class="value" id="total-win2">0</span>
+                </div>
+                <div class="stat-row">
+                    <span class="label">Профит</span>
+                    <span class="value" id="profit2">0</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- История -->
+        <div class="history-section">
+            <h3>📜 История раздач</h3>
+            <div class="history-list" id="historyList">
+                <div class="history-empty">Пока нет раздач. Скиньте фишки в банк и определите победителя!</div>
+            </div>
+        </div>
+
+        <!-- Кнопки управления -->
+        <div class="actions-row">
+            <button class="action-btn undo" id="undoBtn">↩️ Отменить</button>
+            <button class="action-btn reset" id="resetBtn">🔄 Новая игра</button>
+            <button class="action-btn clear-history" id="clearHistoryBtn">🗑️ Очистить историю</button>
         </div>
     </div>
 
     <script>
         (function() {
-            // Проверка поддержки Vibration API
-            const supportsVibration = 'vibrate' in navigator || 'webkitVibrate' in navigator;
-            const statusDot = document.getElementById('statusDot');
-            const statusText = document.getElementById('statusText');
-            const stopBtn = document.getElementById('stopBtn');
-            
-            // Для надёжности используем и стандартный и префиксный
-            const vibrate = (pattern) => {
-                if (navigator.vibrate) {
-                    return navigator.vibrate(pattern);
-                } else if (navigator.webkitVibrate) {
-                    return navigator.webkitVibrate(pattern);
-                } else {
-                    return false;
-                }
+            // ---------- Состояние ----------
+            const state = {
+                // Имена
+                player1Name: 'Игрок 1',
+                player2Name: 'Игрок 2',
+                // Текущие взносы в банк (не сброшенные)
+                currentContrib1: 0,
+                currentContrib2: 0,
+                // Банк
+                bank: 0,
+                // Общая статистика
+                totalContrib1: 0,
+                totalContrib2: 0,
+                totalWin1: 0,
+                totalWin2: 0,
+                // История раздач: массив объектов { id, winner, amount, contrib1, contrib2, timestamp }
+                history: [],
+                // Стек для отмены (храним снимки состояния)
+                undoStack: [],
             };
 
-            // Обновляем статус в зависимости от поддержки
-            function updateStatus(support) {
-                if (!support) {
-                    statusDot.classList.add('error');
-                    statusText.textContent = '⚠️ Vibration API не поддерживается на этом устройстве';
-                    return false;
-                } else {
-                    statusDot.classList.remove('error');
-                    statusText.textContent = '✅ Вибрация поддерживается · нажмите кнопку';
-                    return true;
+            // ---------- DOM элементы ----------
+            const bankAmountEl = document.getElementById('bankAmount');
+            const contrib1El = document.getElementById('contrib1');
+            const contrib2El = document.getElementById('contrib2');
+            const take1Btn = document.getElementById('take1');
+            const take2Btn = document.getElementById('take2');
+            const name1Input = document.getElementById('name1');
+            const name2Input = document.getElementById('name2');
+            const stat1Title = document.getElementById('stat1-title');
+            const stat2Title = document.getElementById('stat2-title');
+            const totalContrib1El = document.getElementById('total-contrib1');
+            const totalContrib2El = document.getElementById('total-contrib2');
+            const totalWin1El = document.getElementById('total-win1');
+            const totalWin2El = document.getElementById('total-win2');
+            const profit1El = document.getElementById('profit1');
+            const profit2El = document.getElementById('profit2');
+            const historyListEl = document.getElementById('historyList');
+            const custom1Input = document.getElementById('custom1');
+            const custom2Input = document.getElementById('custom2');
+            const avatar1 = document.getElementById('avatar1');
+            const avatar2 = document.getElementById('avatar2');
+
+            // ---------- Вспомогательные функции ----------
+            function saveUndo() {
+                const snapshot = JSON.parse(JSON.stringify(state));
+                state.undoStack.push(snapshot);
+                // Ограничим стек 50 записями
+                if (state.undoStack.length > 50) {
+                    state.undoStack.shift();
                 }
             }
 
-            const vibrationSupported = updateStatus(supportsVibration);
-            
-            // Если поддержки нет – делаем кнопки неактивными (визуально и функционально)
-            const testButtons = document.querySelectorAll('.test-btn[data-pattern]');
-            if (!vibrationSupported) {
-                testButtons.forEach(btn => {
-                    btn.style.opacity = '0.5';
-                    btn.style.pointerEvents = 'none';
-                });
-            } else {
-                // Привязываем обработчики только если поддерживается
-                testButtons.forEach(btn => {
-                    btn.addEventListener('click', function(e) {
-                        e.preventDefault();
-                        const patternType = this.dataset.pattern;
-                        const duration = parseInt(this.dataset.duration, 10) || 50;
-                        
-                        // Останавливаем любую текущую вибрацию перед запуском новой
-                        vibrate(0); // немедленная остановка
-                        
-                        let vibrationPattern = duration; // по умолчанию просто число (мс)
-                        
-                        switch (patternType) {
-                            case 'light':
-                                // короткий мягкий импульс 10мс (Taptic Engine лёгкий)
-                                vibrationPattern = 10;
-                                break;
-                            case 'medium':
-                                // средний одиночный удар 40мс
-                                vibrationPattern = 40;
-                                break;
-                            case 'strong':
-                                // Сильный ощутимый удар – два коротких импульса подряд
-                                vibrationPattern = [25, 30, 25]; // вибрация 25мс, пауза 30мс, вибрация 25мс
-                                break;
-                            case 'sos':
-                                // Ритм SOS: три коротких, три длинных, три коротких (с паузами)
-                                vibrationPattern = [
-                                    120, 80, 120, 80, 120,   // S: три коротких
-                                    200,                     // пауза между буквами
-                                    300, 80, 300, 80, 300,   // O: три длинных
-                                    200,                     // пауза
-                                    120, 80, 120, 80, 120    // S снова
-                                ];
-                                break;
-                            case 'continuous':
-                                // длинная непрерывная вибрация 2000 мс
-                                vibrationPattern = 2000;
-                                break;
-                            case 'random':
-                                // случайный паттерн: несколько коротких всплесков
-                                vibrationPattern = [
-                                    30, 50, 30, 50, 40, 
-                                    80, 30, 60, 30, 
-                                    100, 70, 30, 40, 20
-                                ];
-                                break;
-                            default:
-                                vibrationPattern = duration;
-                        }
-                        
-                        // Запускаем вибрацию
-                        const result = vibrate(vibrationPattern);
-                        
-                        if (result) {
-                            // Обновляем статус
-                            statusDot.classList.remove('error');
-                            statusText.textContent = `▶️ Вибрация: ${getPatternName(patternType)}`;
-                            
-                            // Показываем активную точку индикатора (для наглядности, без реального UI)
-                            // Дополнительно можно подсветить, но не обязательно
-                        } else {
-                            statusDot.classList.add('error');
-                            statusText.textContent = '❌ Не удалось запустить вибрацию (API заблокирован?)';
-                        }
-                    });
-                });
+            function restoreState(snapshot) {
+                state.player1Name = snapshot.player1Name;
+                state.player2Name = snapshot.player2Name;
+                state.currentContrib1 = snapshot.currentContrib1;
+                state.currentContrib2 = snapshot.currentContrib2;
+                state.bank = snapshot.bank;
+                state.totalContrib1 = snapshot.totalContrib1;
+                state.totalContrib2 = snapshot.totalContrib2;
+                state.totalWin1 = snapshot.totalWin1;
+                state.totalWin2 = snapshot.totalWin2;
+                state.history = snapshot.history;
+                // ВАЖНО: не перезаписываем undoStack при восстановлении
             }
 
-            // Функция для человекочитаемого имени паттерна
-            function getPatternName(type) {
-                const names = {
-                    'light': 'лёгкий',
-                    'medium': 'средний',
-                    'strong': 'сильный',
-                    'sos': 'SOS',
-                    'continuous': 'непрерывный',
-                    'random': 'случайный'
+            function formatAmount(num) {
+                return num.toLocaleString('ru-RU');
+            }
+
+            function updateUI() {
+                // Банк
+                bankAmountEl.textContent = formatAmount(state.bank);
+                contrib1El.textContent = formatAmount(state.currentContrib1);
+                contrib2El.textContent = formatAmount(state.currentContrib2);
+
+                // Кнопки "Забрать банк"
+                take1Btn.disabled = state.bank === 0;
+                take2Btn.disabled = state.bank === 0;
+
+                // Имена
+                name1Input.value = state.player1Name;
+                name2Input.value = state.player2Name;
+                stat1Title.textContent = `👤 ${state.player1Name}`;
+                stat2Title.textContent = `👤 ${state.player2Name}`;
+                avatar1.textContent = state.player1Name.charAt(0).toUpperCase() || '1';
+                avatar2.textContent = state.player2Name.charAt(0).toUpperCase() || '2';
+
+                // Статистика
+                totalContrib1El.textContent = formatAmount(state.totalContrib1);
+                totalContrib2El.textContent = formatAmount(state.totalContrib2);
+                totalWin1El.textContent = formatAmount(state.totalWin1);
+                totalWin2El.textContent = formatAmount(state.totalWin2);
+
+                const profit1 = state.totalWin1 - state.totalContrib1;
+                const profit2 = state.totalWin2 - state.totalContrib2;
+                profit1El.textContent = (profit1 >= 0 ? '+' : '') + formatAmount(profit1);
+                profit2El.textContent = (profit2 >= 0 ? '+' : '') + formatAmount(profit2);
+                profit1El.className = 'value ' + (profit1 >= 0 ? 'positive' : 'negative');
+                profit2El.className = 'value ' + (profit2 >= 0 ? 'positive' : 'negative');
+
+                // История
+                renderHistory();
+            }
+
+            function renderHistory() {
+                if (state.history.length === 0) {
+                    historyListEl.innerHTML = '<div class="history-empty">Пока нет раздач. Скиньте фишки в банк и определите победителя!</div>';
+                    return;
+                }
+                let html = '';
+                // Показываем последние сверху
+                const reversed = [...state.history].reverse();
+                for (const record of reversed) {
+                    const winnerName = record.winner === 1 ? state.player1Name : state.player2Name;
+                    const winnerClass = record.winner === 1 ? 'p1-winner' : 'p2-winner';
+                    html += `
+                        <div class="history-item">
+                            <span>Раздача #${record.id}</span>
+                            <span>Взносы: ${formatAmount(record.contrib1)} / ${formatAmount(record.contrib2)}</span>
+                            <span>Банк: <strong>${formatAmount(record.amount)}</strong></span>
+                            <span class="winner ${winnerClass}">🏆 ${winnerName}</span>
+                        </div>
+                    `;
+                }
+                historyListEl.innerHTML = html;
+            }
+
+            function animateBank() {
+                bankAmountEl.classList.remove('pulse');
+                // Триггерим reflow
+                void bankAmountEl.offsetWidth;
+                bankAmountEl.classList.add('pulse');
+            }
+
+            // ---------- Действия ----------
+            function addToBank(player, amount) {
+                if (amount <= 0 || isNaN(amount)) return;
+                saveUndo();
+                if (player === 1) {
+                    state.currentContrib1 += amount;
+                    state.totalContrib1 += amount;
+                    state.bank += amount;
+                } else if (player === 2) {
+                    state.currentContrib2 += amount;
+                    state.totalContrib2 += amount;
+                    state.bank += amount;
+                }
+                animateBank();
+                updateUI();
+            }
+
+            function takeBank(player) {
+                if (state.bank === 0) return;
+                saveUndo();
+                const record = {
+                    id: state.history.length + 1,
+                    winner: player,
+                    amount: state.bank,
+                    contrib1: state.currentContrib1,
+                    contrib2: state.currentContrib2,
+                    timestamp: new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
                 };
-                return names[type] || type;
+                state.history.push(record);
+                if (player === 1) {
+                    state.totalWin1 += state.bank;
+                } else if (player === 2) {
+                    state.totalWin2 += state.bank;
+                }
+                // Сбрасываем текущий банк и текущие взносы
+                state.bank = 0;
+                state.currentContrib1 = 0;
+                state.currentContrib2 = 0;
+                updateUI();
             }
 
-            // Кнопка остановки вибрации
-            stopBtn.addEventListener('click', function(e) {
-                e.preventDefault();
-                if (supportsVibration) {
-                    vibrate(0); // останавливает вибрацию
-                    statusDot.classList.remove('error');
-                    statusText.textContent = '⏹️ Вибрация остановлена';
+            function undo() {
+                if (state.undoStack.length === 0) return;
+                const snapshot = state.undoStack.pop();
+                restoreState(snapshot);
+                // После восстановления обновляем UI, но не перезаписываем undoStack (он уже изменён pop)
+                // Однако restoreState не трогает undoStack, так что всё ок.
+                // Но нужно обновить DOM поля ввода имён, если они были изменены
+                updateUI();
+            }
+
+            function resetGame() {
+                if (confirm('Начать новую игру? Вся история и статистика будут сброшены.')) {
+                    saveUndo();
+                    state.player1Name = 'Игрок 1';
+                    state.player2Name = 'Игрок 2';
+                    state.currentContrib1 = 0;
+                    state.currentContrib2 = 0;
+                    state.bank = 0;
+                    state.totalContrib1 = 0;
+                    state.totalContrib2 = 0;
+                    state.totalWin1 = 0;
+                    state.totalWin2 = 0;
+                    state.history = [];
+                    state.undoStack = []; // очищаем стек, так как полный сброс
+                    updateUI();
+                }
+            }
+
+            function clearHistory() {
+                if (state.history.length === 0) return;
+                if (confirm('Очистить историю раздач? Статистика останется.')) {
+                    saveUndo();
+                    state.history = [];
+                    updateUI();
+                }
+            }
+
+            function updateNameFromInput(player) {
+                const input = player === 1 ? name1Input : name2Input;
+                const newName = input.value.trim() || (player === 1 ? 'Игрок 1' : 'Игрок 2');
+                if (newName !== (player === 1 ? state.player1Name : state.player2Name)) {
+                    saveUndo();
+                    if (player === 1) {
+                        state.player1Name = newName;
+                    } else {
+                        state.player2Name = newName;
+                    }
+                    updateUI();
+                }
+            }
+
+            // ---------- Обработчики событий ----------
+            // Кнопки фиксированных сумм
+            document.querySelectorAll('.chip-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const player = parseInt(btn.dataset.player);
+                    const amount = parseInt(btn.dataset.amount);
+                    addToBank(player, amount);
+                });
+            });
+
+            // Кнопки "В банк" для произвольной суммы
+            document.getElementById('custom-btn1').addEventListener('click', () => {
+                const amount = parseInt(custom1Input.value);
+                if (amount > 0) {
+                    addToBank(1, amount);
+                    custom1Input.value = '';
                 } else {
-                    statusDot.classList.add('error');
-                    statusText.textContent = '⚠️ Нет поддержки вибрации';
+                    alert('Введите корректную сумму');
+                }
+            });
+            document.getElementById('custom-btn2').addEventListener('click', () => {
+                const amount = parseInt(custom2Input.value);
+                if (amount > 0) {
+                    addToBank(2, amount);
+                    custom2Input.value = '';
+                } else {
+                    alert('Введите корректную сумму');
                 }
             });
 
-            // Дополнительно: остановка при уходе со страницы (visibilitychange)
-            document.addEventListener('visibilitychange', function() {
-                if (document.hidden && supportsVibration) {
-                    vibrate(0);
-                }
+            // Enter в поле произвольной суммы
+            custom1Input.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') document.getElementById('custom-btn1').click();
+            });
+            custom2Input.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') document.getElementById('custom-btn2').click();
             });
 
-            // Предотвращаем двойной тап, но оставляем ощущение нажатия
-            document.addEventListener('touchstart', function(e) {
-                // Просто для предотвращения выделения
-            }, { passive: true });
+            // Кнопки "Забрать банк"
+            take1Btn.addEventListener('click', () => takeBank(1));
+            take2Btn.addEventListener('click', () => takeBank(2));
 
-            // Инициализация статуса
-            if (!supportsVibration) {
-                statusDot.classList.add('error');
-                statusText.textContent = '⚠️ Vibration API не найден';
-            } else {
-                statusDot.classList.remove('error');
-                statusText.textContent = '✅ Taptic Engine готов';
-            }
+            // Имена
+            name1Input.addEventListener('change', () => updateNameFromInput(1));
+            name2Input.addEventListener('change', () => updateNameFromInput(2));
+
+            // Кнопки управления
+            document.getElementById('undoBtn').addEventListener('click', undo);
+            document.getElementById('resetBtn').addEventListener('click', resetGame);
+            document.getElementById('clearHistoryBtn').addEventListener('click', clearHistory);
+
+            // ---------- Инициализация ----------
+            updateUI();
         })();
     </script>
 </body>
