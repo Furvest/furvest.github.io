@@ -1,1006 +1,738 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Покерный банк — капитал и ставки</title>
-    <style>
-        :root {
-            --felt: #1a5c2a;
-            --felt-dark: #0e3d1a;
-            --gold: #d4af37;
-            --gold-light: #f0d060;
-            --chip-red: #c0392b;
-            --chip-blue: #2980b9;
-            --chip-green: #27ae60;
-            --chip-black: #2c3e50;
-            --cream: #fdf5e6;
-            --dark-text: #2c2c2c;
-            --shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
-            --radius: 16px;
-            --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Маслов Виталий Семёнович — писатель, моряк, просветитель</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+    body {
+      font-family: 'Georgia', 'Times New Roman', serif;
+      background: #0d1b2a;
+      color: #e0e6ed;
+      line-height: 1.6;
+    }
 
-        body {
-            font-family: 'Segoe UI', 'Roboto', system-ui, sans-serif;
-            background: radial-gradient(ellipse at center, #1e3c2a 0%, #0a1f12 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            color: var(--dark-text);
-        }
+    /* ── Общие стили ── */
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 20px;
+    }
 
-        .app {
-            width: 100%;
-            max-width: 1100px;
-            background: linear-gradient(145deg, #f8f0e0, #e8dcc8);
-            border-radius: 24px;
-            box-shadow: var(--shadow), inset 0 1px 0 rgba(255, 255, 255, 0.5);
-            padding: 28px 24px;
-            position: relative;
-            overflow: hidden;
-        }
+    h1, h2, h3 {
+      font-weight: 400;
+      letter-spacing: 0.5px;
+    }
 
-        .app::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 8px;
-            background: linear-gradient(90deg, var(--gold), #b8860b, var(--gold));
-            border-radius: 24px 24px 0 0;
-        }
+    h1 {
+      font-size: 2.4rem;
+      color: #f0c27f;
+      text-align: center;
+      padding: 30px 0 10px;
+    }
 
-        .header {
-            text-align: center;
-            margin-bottom: 28px;
-            position: relative;
-        }
+    h2 {
+      font-size: 1.8rem;
+      color: #f0c27f;
+      margin-bottom: 20px;
+      border-left: 4px solid #f0c27f;
+      padding-left: 15px;
+    }
 
-        .header h1 {
-            font-size: clamp(1.8rem, 4vw, 2.8rem);
-            font-weight: 900;
-            color: #1a3a1a;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.1);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-        }
+    h3 {
+      font-size: 1.3rem;
+      color: #d4a76a;
+      margin-bottom: 12px;
+    }
 
-        .header h1 .icon {
-            font-size: 2.5rem;
-        }
+    p {
+      margin-bottom: 12px;
+      color: #cfd8e3;
+    }
 
-        .subtitle {
-            color: #5a4a3a;
-            font-size: 0.95rem;
-            margin-top: 4px;
-            font-weight: 500;
-        }
+    a {
+      color: #f0c27f;
+      text-decoration: none;
+    }
 
-        .game-container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            margin-bottom: 24px;
-        }
+    .subtitle {
+      text-align: center;
+      font-size: 1.1rem;
+      color: #9bb0c9;
+      margin-bottom: 30px;
+      font-style: italic;
+    }
 
-        @media (max-width: 700px) {
-            .game-container {
-                grid-template-columns: 1fr;
-                gap: 16px;
-            }
-            .app {
-                padding: 20px 14px;
-                border-radius: 18px;
-            }
-        }
+    /* ── Вкладки ── */
+    .tabs {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+    }
 
-        .player-card {
-            background: linear-gradient(160deg, #ffffff, #f5efe6);
-            border-radius: var(--radius);
-            padding: 20px 18px;
-            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15), inset 0 1px 0 #fff;
-            border: 1px solid rgba(255, 255, 255, 0.6);
-            transition: var(--transition);
-            display: flex;
-            flex-direction: column;
-        }
+    .tab-btn {
+      padding: 12px 28px;
+      border: 2px solid #f0c27f;
+      background: transparent;
+      color: #f0c27f;
+      font-size: 1.05rem;
+      cursor: pointer;
+      border-radius: 30px;
+      transition: all 0.3s ease;
+      font-family: inherit;
+    }
 
-        .player-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.25);
-        }
+    .tab-btn:hover {
+      background: #f0c27f;
+      color: #0d1b2a;
+    }
 
-        .player-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 16px;
-            flex-wrap: wrap;
-        }
+    .tab-btn.active {
+      background: #f0c27f;
+      color: #0d1b2a;
+      font-weight: bold;
+    }
 
-        .player-avatar {
-            width: 52px;
-            height: 52px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.8rem;
-            font-weight: bold;
-            color: #fff;
-            flex-shrink: 0;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            border: 2px solid #fff;
-        }
+    .tab-content {
+      display: none;
+      animation: fadeIn 0.5s ease;
+    }
 
-        .player-avatar.p1 {
-            background: linear-gradient(135deg, #e74c3c, #c0392b);
-        }
-        .player-avatar.p2 {
-            background: linear-gradient(135deg, #3498db, #2980b9);
-        }
+    .tab-content.active {
+      display: block;
+    }
 
-        .player-name-input {
-            flex: 1;
-            min-width: 120px;
-            font-size: 1.2rem;
-            font-weight: 700;
-            padding: 10px 14px;
-            border: 2px solid #ddd0b8;
-            border-radius: 12px;
-            background: #fffdf9;
-            color: #2c2c2c;
-            outline: none;
-            transition: var(--transition);
-        }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
 
-        .player-name-input:focus {
-            border-color: var(--gold);
-            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.3);
-        }
+    /* ── Блоки ── */
+    .block {
+      background: #132237;
+      border-radius: 16px;
+      padding: 30px;
+      margin-bottom: 30px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+      border: 1px solid #1e3a5f;
+    }
 
-        .player-capital {
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: #5a4a3a;
-            background: #f0e8d8;
-            padding: 6px 12px;
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            white-space: nowrap;
-        }
+    .block-number {
+      display: inline-block;
+      background: #f0c27f;
+      color: #0d1b2a;
+      font-weight: bold;
+      width: 32px;
+      height: 32px;
+      line-height: 32px;
+      text-align: center;
+      border-radius: 50%;
+      margin-right: 10px;
+      font-size: 0.9rem;
+    }
 
-        .player-capital .capital-value {
-            font-weight: 800;
-            color: #1a3a1a;
-            font-size: 1.1rem;
-            margin-left: 4px;
-        }
+    /* ── Заглушка видео ── */
+    .video-placeholder {
+      background: #0b1626;
+      border: 2px dashed #2e5077;
+      border-radius: 12px;
+      height: 220px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #4a6fa5;
+      font-size: 1.6rem;
+      letter-spacing: 6px;
+      text-transform: uppercase;
+      margin: 15px 0;
+      cursor: pointer;
+      transition: border-color 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
 
-        .chip-buttons {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-bottom: 14px;
-            justify-content: center;
-        }
+    .video-placeholder::before {
+      content: '▶';
+      font-size: 3rem;
+      margin-bottom: 10px;
+      opacity: 0.5;
+    }
 
-        .chip-btn {
-            padding: 10px 14px;
-            border: none;
-            border-radius: 50px;
-            font-weight: 800;
-            font-size: 0.9rem;
-            cursor: pointer;
-            transition: var(--transition);
-            letter-spacing: 0.5px;
-            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            color: #fff;
-            text-transform: uppercase;
-            flex: 0 0 auto;
-        }
+    .video-placeholder:hover {
+      border-color: #f0c27f;
+      color: #f0c27f;
+    }
 
-        .chip-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 14px rgba(0, 0, 0, 0.25);
-        }
-        .chip-btn:active {
-            transform: translateY(1px);
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        }
+    .video-placeholder.small {
+      height: 150px;
+      font-size: 1.2rem;
+    }
 
-        .chip-btn.chip-1 {
-            background: linear-gradient(135deg, #e67e22, #d35400);
-        }
-        .chip-btn.chip-2 {
-            background: linear-gradient(135deg, #f39c12, #e67e22);
-        }
-        .chip-btn.chip-5 {
-            background: linear-gradient(135deg, #e74c3c, #c0392b);
-        }
-        .chip-btn.chip-10 {
-            background: linear-gradient(135deg, #8e44ad, #6c3483);
-        }
-        .chip-btn.chip-50 {
-            background: linear-gradient(135deg, #2ecc71, #1e8449);
-        }
+    /* ── Сетка фото ── */
+    .photo-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 20px;
+      margin-top: 15px;
+    }
 
-        .custom-bet {
-            display: flex;
-            gap: 8px;
-            margin-top: 4px;
-        }
+    .photo-card {
+      background: #0b1626;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid #1e3a5f;
+      transition: transform 0.3s, box-shadow 0.3s;
+      cursor: pointer;
+    }
 
-        .custom-bet input {
-            flex: 1;
-            padding: 10px 12px;
-            border: 2px solid #ddd0b8;
-            border-radius: 12px;
-            font-size: 1rem;
-            font-weight: 600;
-            outline: none;
-            background: #fffdf9;
-            transition: var(--transition);
-            min-width: 0;
-        }
-        .custom-bet input:focus {
-            border-color: var(--gold);
-            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.3);
-        }
-        .custom-bet button {
-            padding: 10px 16px;
-            border: none;
-            border-radius: 12px;
-            background: var(--gold);
-            color: #1a1a1a;
-            font-weight: 800;
-            cursor: pointer;
-            transition: var(--transition);
-            white-space: nowrap;
-            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
-        }
-        .custom-bet button:hover {
-            background: var(--gold-light);
-            transform: translateY(-1px);
-        }
+    .photo-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 25px rgba(240, 194, 127, 0.15);
+    }
 
-        .take-bank-btn {
-            margin-top: auto;
-            padding: 14px 20px;
-            border: none;
-            border-radius: 14px;
-            font-weight: 900;
-            font-size: 1.1rem;
-            cursor: pointer;
-            transition: var(--transition);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: #fff;
-            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            width: 100%;
-        }
-        .take-bank-btn.p1 {
-            background: linear-gradient(135deg, #e74c3c, #a93226);
-        }
-        .take-bank-btn.p2 {
-            background: linear-gradient(135deg, #3498db, #1a5276);
-        }
-        .take-bank-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.35);
-        }
-        .take-bank-btn:active {
-            transform: translateY(1px);
-            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
-        }
-        .take-bank-btn:disabled {
-            opacity: 0.4;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-        }
+    .photo-placeholder {
+      height: 200px;
+      background: linear-gradient(135deg, #1a2d4a, #0b1626);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #4a6fa5;
+      font-size: 2.5rem;
+    }
 
-        .bank-section {
-            background: linear-gradient(145deg, #2c3e50, #1a252f);
-            border-radius: var(--radius);
-            padding: 24px 20px;
-            text-align: center;
-            margin-bottom: 24px;
-            box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.5), 0 8px 24px rgba(0, 0, 0, 0.3);
-            position: relative;
-            overflow: hidden;
-            border: 2px solid rgba(212, 175, 55, 0.4);
-        }
+    .photo-card p {
+      padding: 12px;
+      font-size: 0.9rem;
+      text-align: center;
+      color: #9bb0c9;
+    }
 
-        .bank-section::after {
-            content: '♠ ♥ ♦ ♣';
-            position: absolute;
-            bottom: 8px;
-            right: 16px;
-            font-size: 1.4rem;
-            color: rgba(255, 255, 255, 0.1);
-            letter-spacing: 10px;
-            pointer-events: none;
-        }
+    /* ── Книжная страница ── */
+    .book-page {
+      background: #f5f0e8;
+      color: #2c1810;
+      border-radius: 8px;
+      padding: 40px 45px;
+      margin: 20px 0;
+      box-shadow: inset 0 0 30px rgba(0,0,0,0.08), 0 8px 30px rgba(0,0,0,0.5);
+      position: relative;
+      font-family: 'Georgia', serif;
+      line-height: 1.8;
+    }
 
-        .bank-label {
-            color: #bbb;
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            font-weight: 600;
-            margin-bottom: 6px;
-        }
-        .bank-amount {
-            font-size: clamp(2.8rem, 8vw, 4.5rem);
-            font-weight: 900;
-            color: var(--gold-light);
-            text-shadow: 0 0 30px rgba(212, 175, 55, 0.5);
-            line-height: 1;
-            transition: var(--transition);
-        }
-        .bank-amount.pulse {
-            animation: pulse 0.4s ease;
-        }
-        @keyframes pulse {
-            0% {
-                transform: scale(1);
-            }
-            40% {
-                transform: scale(1.08);
-                color: #fff;
-            }
-            100% {
-                transform: scale(1);
-            }
-        }
+    .book-page::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 6px;
+      background: linear-gradient(to right, #d4a76a, #f0c27f, #d4a76a);
+      border-radius: 8px 0 0 8px;
+    }
 
-        .bank-contributions {
-            display: flex;
-            justify-content: center;
-            gap: 30px;
-            margin-top: 12px;
-            color: #ccc;
-            font-size: 0.9rem;
-            flex-wrap: wrap;
-        }
-        .bank-contributions span {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .bank-contributions .dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            display: inline-block;
-        }
-        .dot.p1-dot {
-            background: #e74c3c;
-        }
-        .dot.p2-dot {
-            background: #3498db;
-        }
+    .book-page p {
+      color: #2c1810;
+      text-indent: 25px;
+      font-size: 1.05rem;
+    }
 
-        .stats-section {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            margin-bottom: 24px;
-        }
-        @media (max-width: 600px) {
-            .stats-section {
-                grid-template-columns: 1fr;
-                gap: 12px;
-            }
-        }
+    .book-page .drop-cap::first-letter {
+      font-size: 3.2rem;
+      float: left;
+      line-height: 1;
+      padding-right: 8px;
+      color: #8b4513;
+      font-weight: bold;
+    }
 
-        .stat-card {
-            background: rgba(255, 255, 255, 0.7);
-            border-radius: 14px;
-            padding: 16px 18px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(4px);
-        }
-        .stat-card h3 {
-            font-size: 1rem;
-            color: #5a4a3a;
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-weight: 700;
-        }
-        .stat-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 6px 0;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-            font-size: 0.95rem;
-        }
-        .stat-row:last-child {
-            border-bottom: none;
-        }
-        .stat-row .label {
-            color: #6a5a4a;
-            font-weight: 500;
-        }
-        .stat-row .value {
-            font-weight: 800;
-            color: #1a1a1a;
-        }
-        .stat-row .value.positive {
-            color: #1e8449;
-        }
-        .stat-row .value.negative {
-            color: #a93226;
-        }
+    /* ── Стихотворение ── */
+    .poem {
+      background: #0b1626;
+      border-left: 3px solid #f0c27f;
+      padding: 20px 25px;
+      margin: 20px 0;
+      border-radius: 0 12px 12px 0;
+      font-style: italic;
+    }
 
-        .history-section {
-            background: rgba(255, 255, 255, 0.6);
-            border-radius: 14px;
-            padding: 16px 18px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(4px);
-            margin-bottom: 20px;
-        }
-        .history-section h3 {
-            font-size: 1rem;
-            color: #5a4a3a;
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-weight: 700;
-        }
-        .history-list {
-            max-height: 180px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-        .history-item {
-            background: #fffdf9;
-            padding: 10px 14px;
-            border-radius: 10px;
-            font-size: 0.88rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 10px;
-            flex-wrap: wrap;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-            border-left: 4px solid var(--gold);
-        }
-        .history-item .winner {
-            font-weight: 800;
-            color: #1a5c2a;
-        }
-        .history-item .winner.p1-winner {
-            color: #a93226;
-        }
-        .history-item .winner.p2-winner {
-            color: #1a5276;
-        }
-        .history-empty {
-            text-align: center;
-            color: #999;
-            font-style: italic;
-            padding: 20px;
-        }
+    .poem p {
+      color: #d4a76a;
+      text-indent: 0;
+      margin-bottom: 6px;
+    }
 
-        .actions-row {
-            display: flex;
-            gap: 12px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-        .action-btn {
-            padding: 12px 22px;
-            border: none;
-            border-radius: 50px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: var(--transition);
-            font-size: 0.95rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .action-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.25);
-        }
-        .action-btn:active {
-            transform: translateY(1px);
-        }
-        .action-btn.reset {
-            background: linear-gradient(135deg, #ecf0f1, #bdc3c7);
-            color: #2c3e50;
-        }
-        .action-btn.undo {
-            background: linear-gradient(135deg, #f39c12, #e67e22);
-            color: #fff;
-        }
-        .action-btn.clear-history {
-            background: linear-gradient(135deg, #95a5a6, #7f8c8d);
-            color: #fff;
-        }
+    /* ── Культурная карта ── */
+    .map-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 15px;
+      margin-top: 15px;
+    }
 
-        /* Scrollbar styling */
-        .history-list::-webkit-scrollbar {
-            width: 6px;
-        }
-        .history-list::-webkit-scrollbar-track {
-            background: rgba(0, 0, 0, 0.05);
-            border-radius: 3px;
-        }
-        .history-list::-webkit-scrollbar-thumb {
-            background: #b8a88a;
-            border-radius: 3px;
-        }
-    </style>
+    .map-item {
+      background: #0b1626;
+      border: 1px solid #2e5077;
+      border-radius: 10px;
+      padding: 18px;
+      text-align: center;
+      transition: border-color 0.3s, background 0.3s;
+    }
+
+    .map-item:hover {
+      border-color: #f0c27f;
+      background: #132237;
+    }
+
+    .map-item .icon {
+      font-size: 2rem;
+      margin-bottom: 8px;
+    }
+
+    .map-item p {
+      font-size: 0.9rem;
+    }
+
+    /* ── Послание потомкам ── */
+    .legacy {
+      background: linear-gradient(135deg, #1a2d4a, #132237);
+      border: 1px solid #f0c27f;
+      border-radius: 16px;
+      padding: 35px;
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .legacy blockquote {
+      font-size: 1.15rem;
+      font-style: italic;
+      color: #f0c27f;
+      max-width: 700px;
+      margin: 0 auto 20px;
+      line-height: 1.8;
+      position: relative;
+    }
+
+    .legacy blockquote::before {
+      content: '«';
+      font-size: 3rem;
+      color: #f0c27f;
+      opacity: 0.3;
+      position: absolute;
+      left: -20px;
+      top: -15px;
+    }
+
+    /* ── Адаптив ── */
+    @media (max-width: 768px) {
+      h1 { font-size: 1.7rem; }
+      h2 { font-size: 1.4rem; }
+      .block { padding: 20px; }
+      .book-page { padding: 25px 20px; }
+      .tab-btn { padding: 10px 18px; font-size: 0.9rem; }
+      .legacy blockquote { font-size: 1rem; }
+    }
+
+    /* ── Кнопка «наверх» ── */
+    .back-to-top {
+      position: fixed;
+      bottom: 25px;
+      right: 25px;
+      background: #f0c27f;
+      color: #0d1b2a;
+      border: none;
+      border-radius: 50%;
+      width: 48px;
+      height: 48px;
+      font-size: 1.3rem;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(240,194,127,0.4);
+      transition: transform 0.3s;
+      z-index: 100;
+      display: none;
+    }
+
+    .back-to-top:hover {
+      transform: scale(1.1);
+    }
+
+    .back-to-top.visible {
+      display: block;
+    }
+
+    /* ── Счётчик просмотров (декоративный) ── */
+    .counter {
+      text-align: center;
+      font-size: 0.85rem;
+      color: #4a6fa5;
+      margin-top: 40px;
+      padding-bottom: 20px;
+      border-top: 1px solid #1e3a5f;
+    }
+  </style>
 </head>
 <body>
-    <div class="app">
-        <div class="header">
-            <h1>
-                <span class="icon">🃏</span>
-                Покерный банк
-                <span class="icon">🃏</span>
-            </h1>
-            <p class="subtitle">Капитал 1000 · Ставки уменьшены в 10 раз · Скидывайте в банк и забирайте выигрыш</p>
-        </div>
 
-        <!-- Основная игровая зона -->
-        <div class="game-container">
-            <!-- Игрок 1 -->
-            <div class="player-card" id="player1-card">
-                <div class="player-header">
-                    <div class="player-avatar p1" id="avatar1">1</div>
-                    <input class="player-name-input" id="name1" type="text" value="Игрок 1" maxlength="20" placeholder="Имя игрока 1">
-                    <div class="player-capital">
-                        💰 Капитал: <span class="capital-value" id="capital1">1000</span>
-                    </div>
-                </div>
-                <div class="chip-buttons">
-                    <button class="chip-btn chip-1" data-player="1" data-amount="1">1</button>
-                    <button class="chip-btn chip-2" data-player="1" data-amount="2.5">2.5</button>
-                    <button class="chip-btn chip-5" data-player="1" data-amount="5">5</button>
-                    <button class="chip-btn chip-10" data-player="1" data-amount="10">10</button>
-                    <button class="chip-btn chip-50" data-player="1" data-amount="50">50</button>
-                </div>
-                <div class="custom-bet">
-                    <input type="number" id="custom1" placeholder="Своя ставка" min="0.1" step="0.1">
-                    <button id="custom-btn1" data-player="1">В банк</button>
-                </div>
-                <button class="take-bank-btn p1" id="take1" disabled>💰 Забрать банк</button>
-            </div>
+<div class="container">
 
-            <!-- Игрок 2 -->
-            <div class="player-card" id="player2-card">
-                <div class="player-header">
-                    <div class="player-avatar p2" id="avatar2">2</div>
-                    <input class="player-name-input" id="name2" type="text" value="Игрок 2" maxlength="20" placeholder="Имя игрока 2">
-                    <div class="player-capital">
-                        💰 Капитал: <span class="capital-value" id="capital2">1000</span>
-                    </div>
-                </div>
-                <div class="chip-buttons">
-                    <button class="chip-btn chip-1" data-player="2" data-amount="1">1</button>
-                    <button class="chip-btn chip-2" data-player="2" data-amount="2.5">2.5</button>
-                    <button class="chip-btn chip-5" data-player="2" data-amount="5">5</button>
-                    <button class="chip-btn chip-10" data-player="2" data-amount="10">10</button>
-                    <button class="chip-btn chip-50" data-player="2" data-amount="50">50</button>
-                </div>
-                <div class="custom-bet">
-                    <input type="number" id="custom2" placeholder="Своя ставка" min="0.1" step="0.1">
-                    <button id="custom-btn2" data-player="2">В банк</button>
-                </div>
-                <button class="take-bank-btn p2" id="take2" disabled>💰 Забрать банк</button>
-            </div>
-        </div>
+  <!-- ═══════════════════════════════════════════════════════════
+       ЗАГОЛОВОК
+       ═══════════════════════════════════════════════════════════ -->
+  <h1>Виталий Семёнович Маслов</h1>
+  <p class="subtitle">1 сентября 1935 — 9 декабря 2001 · Писатель · Моряк · Просветитель</p>
 
-        <!-- Банк -->
-        <div class="bank-section">
-            <div class="bank-label">Текущий банк</div>
-            <div class="bank-amount" id="bankAmount">0</div>
-            <div class="bank-contributions">
-                <span><span class="dot p1-dot"></span> <span id="contrib1">0</span></span>
-                <span><span class="dot p2-dot"></span> <span id="contrib2">0</span></span>
-            </div>
-        </div>
+  <!-- ═══════════════════════════════════════════════════════════
+       ВКЛАДКИ
+       ═══════════════════════════════════════════════════════════ -->
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="tab-photo">📷 Фото</button>
+    <button class="tab-btn" data-tab="tab-video">🎬 Видео</button>
+    <button class="tab-btn" data-tab="tab-bio">📖 Биография</button>
+  </div>
 
-        <!-- Статистика -->
-        <div class="stats-section">
-            <div class="stat-card" id="stat1-card">
-                <h3 id="stat1-title">👤 Игрок 1</h3>
-                <div class="stat-row">
-                    <span class="label">Всего вложено</span>
-                    <span class="value" id="total-contrib1">0</span>
-                </div>
-                <div class="stat-row">
-                    <span class="label">Всего выиграно</span>
-                    <span class="value" id="total-win1">0</span>
-                </div>
-                <div class="stat-row">
-                    <span class="label">Профит</span>
-                    <span class="value" id="profit1">0</span>
-                </div>
-            </div>
-            <div class="stat-card" id="stat2-card">
-                <h3 id="stat2-title">👤 Игрок 2</h3>
-                <div class="stat-row">
-                    <span class="label">Всего вложено</span>
-                    <span class="value" id="total-contrib2">0</span>
-                </div>
-                <div class="stat-row">
-                    <span class="label">Всего выиграно</span>
-                    <span class="value" id="total-win2">0</span>
-                </div>
-                <div class="stat-row">
-                    <span class="label">Профит</span>
-                    <span class="value" id="profit2">0</span>
-                </div>
-            </div>
-        </div>
+  <!-- ═══════════════════════════════════════════════════════════
+       ВКЛАДКА: ФОТО
+       ═══════════════════════════════════════════════════════════ -->
+  <div id="tab-photo" class="tab-content active">
 
-        <!-- История -->
-        <div class="history-section">
-            <h3>📜 История раздач</h3>
-            <div class="history-list" id="historyList">
-                <div class="history-empty">Пока нет раздач. Скиньте фишки в банк и определите победителя!</div>
-            </div>
-        </div>
+    <!-- БЛОК 1: Краткий обзор -->
+    <div class="block">
+      <h2><span class="block-number">1</span> Краткий обзор</h2>
+      <p>
+        Виталий Семёнович Маслов — русский советский писатель, моряк, 
+        общественный деятель, Почётный гражданин Мурманска. Более 20 лет 
+        он работал радистом и начальником радиостанции на легендарном 
+        атомном ледоколе «Ленин». Автор романов «Круговая порука», 
+        «Внутренний рынок», «Ещё живые», повестей и рассказов о Северe. 
+        Один из инициаторов возрождения Дня славянской письменности и 
+        культуры в России[reference:0].
+      </p>
+      <div class="video-placeholder" onclick="this.innerHTML='<span style=\'color:#f0c27f;font-size:1rem;\'>ВИДЕО ЗАГРУЖАЕТСЯ...</span>'">
+        ВИДЕО
+      </div>
+      <p style="font-size:0.85rem;color:#4a6fa5;text-align:center;">
+        Мини-ролик: «Виталий Маслов — Север в переплёте»
+      </p>
 
-        <!-- Кнопки управления -->
-        <div class="actions-row">
-            <button class="action-btn undo" id="undoBtn">↩️ Отменить</button>
-            <button class="action-btn reset" id="resetBtn">🔄 Новая игра</button>
-            <button class="action-btn clear-history" id="clearHistoryBtn">🗑️ Очистить историю</button>
+      <div class="photo-grid">
+        <div class="photo-card">
+          <div class="photo-placeholder">📷</div>
+          <p>Виталий Маслов на борту атомохода «Ленин»</p>
         </div>
+        <div class="photo-card">
+          <div class="photo-placeholder">📷</div>
+          <p>Писатель за работой. Мурманск, 1980-е</p>
+        </div>
+        <div class="photo-card">
+          <div class="photo-placeholder">📷</div>
+          <p>Маслов среди моряков. Арктика</p>
+        </div>
+        <div class="photo-card">
+          <div class="photo-placeholder">📷</div>
+          <p>Мемориальная доска на ул. Октябрьской, 23</p>
+        </div>
+      </div>
     </div>
 
-    <script>
-        (function() {
-            // ---------- Состояние ----------
-            const state = {
-                // Имена
-                player1Name: 'Игрок 1',
-                player2Name: 'Игрок 2',
-                // Капитал (стартовый 1000)
-                capital1: 1000,
-                capital2: 1000,
-                // Текущие взносы в банк (не сброшенные)
-                currentContrib1: 0,
-                currentContrib2: 0,
-                // Банк
-                bank: 0,
-                // Общая статистика
-                totalContrib1: 0,
-                totalContrib2: 0,
-                totalWin1: 0,
-                totalWin2: 0,
-                // История раздач: массив объектов { id, winner, amount, contrib1, contrib2, timestamp }
-                history: [],
-                // Стек для отмены (храним снимки состояния)
-                undoStack: [],
-            };
+    <!-- БЛОК 2: Биография — страница книги -->
+    <div class="block">
+      <h2><span class="block-number">2</span> Биография: работа с архивом</h2>
+      <p style="color:#9bb0c9;font-style:italic;margin-bottom:15px;">
+        Ниже — фрагмент из архивных материалов. Страница книги оживает…
+      </p>
 
-            // ---------- DOM элементы ----------
-            const bankAmountEl = document.getElementById('bankAmount');
-            const contrib1El = document.getElementById('contrib1');
-            const contrib2El = document.getElementById('contrib2');
-            const take1Btn = document.getElementById('take1');
-            const take2Btn = document.getElementById('take2');
-            const name1Input = document.getElementById('name1');
-            const name2Input = document.getElementById('name2');
-            const stat1Title = document.getElementById('stat1-title');
-            const stat2Title = document.getElementById('stat2-title');
-            const totalContrib1El = document.getElementById('total-contrib1');
-            const totalContrib2El = document.getElementById('total-contrib2');
-            const totalWin1El = document.getElementById('total-win1');
-            const totalWin2El = document.getElementById('total-win2');
-            const profit1El = document.getElementById('profit1');
-            const profit2El = document.getElementById('profit2');
-            const historyListEl = document.getElementById('historyList');
-            const custom1Input = document.getElementById('custom1');
-            const custom2Input = document.getElementById('custom2');
-            const avatar1 = document.getElementById('avatar1');
-            const avatar2 = document.getElementById('avatar2');
-            const capital1El = document.getElementById('capital1');
-            const capital2El = document.getElementById('capital2');
+      <div class="book-page">
+        <h3 style="color:#8b4513;margin-bottom:18px;">Из личного дела. Запись № 47</h3>
+        <p class="drop-cap">
+          Виталий Семёнович Маслов родился 1 сентября 1935 года в поморской 
+          семье в деревне Сёмжа Мезенского района Архангельской области. 
+          Отец — Семён Иванович, потомственный рыбак. Мать — Анна Петровна, 
+          вела хозяйство. С детства Виталий слышал поморские сказы и 
+          былины, которые позже вошли в его прозу.
+        </p>
+        <p>
+          Окончил Ленинградское мореходное училище по специальности 
+          «радиотехника». С 1951 по 1956 год учился, затем работал на 
+          судах Дальнего Востока и Сахалина. В 1959 году вернулся на 
+          родину, работал в Архангельской гидрографической базе. 
+          С 1962 года — в Мурманском морском пароходстве, на атомном 
+          ледоколе «Ленин»[reference:1].
+        </p>
+        <p>
+          <em>Архивная пометка:</em> «В личном деле обнаружена тетрадь 
+          с черновиками рассказа "Северная быль". Первая публикация — 
+          журнал "Смена", 1968 год»[reference:2].
+        </p>
+        <p>
+          <em>Необычная находка:</em> среди документов — письмо 
+          Виталия Маслова сыновьям, датированное 1998 годом. В нём он 
+          пишет: <em>«Счастья вам, сыновья, и большого настоящего успеха! 
+          Помните: где бы вы ни были, корни ваши — здесь, на Севере»</em>[reference:3].
+        </p>
+      </div>
+    </div>
 
-            // ---------- Вспомогательные функции ----------
-            function saveUndo() {
-                const snapshot = JSON.parse(JSON.stringify(state));
-                state.undoStack.push(snapshot);
-                // Ограничим стек 50 записями
-                if (state.undoStack.length > 50) {
-                    state.undoStack.shift();
-                }
-            }
+    <!-- БЛОК 3: Творческий путь -->
+    <div class="block">
+      <h2><span class="block-number">3</span> Творческий путь</h2>
+      <p>
+        Первый рассказ «Северная быль» опубликован в 1968 году. 
+        Роман «Круговая порука» (1977) принёс писателю всесоюзную 
+        известность. В 1978 году Маслов принят в Союз писателей СССР. 
+        Пик творчества — 1970–1980-е годы. Лауреат литературных премий 
+        имени Александра Подстаницкого, имени Николая Островского[reference:4].
+      </p>
 
-            function restoreState(snapshot) {
-                state.player1Name = snapshot.player1Name;
-                state.player2Name = snapshot.player2Name;
-                state.capital1 = snapshot.capital1;
-                state.capital2 = snapshot.capital2;
-                state.currentContrib1 = snapshot.currentContrib1;
-                state.currentContrib2 = snapshot.currentContrib2;
-                state.bank = snapshot.bank;
-                state.totalContrib1 = snapshot.totalContrib1;
-                state.totalContrib2 = snapshot.totalContrib2;
-                state.totalWin1 = snapshot.totalWin1;
-                state.totalWin2 = snapshot.totalWin2;
-                state.history = snapshot.history;
-                // ВАЖНО: не перезаписываем undoStack при восстановлении
-            }
+      <!-- Интерактивная презентация: 3 стихотворения -->
+      <h3 style="margin-top:25px;">Интерактивная презентация: три стихотворения</h3>
+      <p style="font-size:0.9rem;color:#9bb0c9;">
+        Нажмите на карточку, чтобы услышать стихотворение в исполнении автора 
+        (аудио/видео заглушка).
+      </p>
 
-            function formatAmount(num) {
-                // отображаем с одним десятичным знаком, если дробная часть не целая
-                return Number(num.toFixed(1)).toLocaleString('ru-RU');
-            }
+      <div class="photo-grid" style="margin-top:15px;">
+        <div class="photo-card" onclick="showPoem(1)">
+          <div class="photo-placeholder" style="font-size:2rem;">🌊</div>
+          <p><strong>«Северная быль»</strong><br><small>1968 · рассказ</small></p>
+        </div>
+        <div class="photo-card" onclick="showPoem(2)">
+          <div class="photo-placeholder" style="font-size:2rem;">❄️</div>
+          <p><strong>«Зырянова бумага»</strong><br><small>1973 · премия</small></p>
+        </div>
+        <div class="photo-card" onclick="showPoem(3)">
+          <div class="photo-placeholder" style="font-size:2rem;">⚓</div>
+          <p><strong>«Беломорское горло»</strong><br><small>1985 · очерк</small></p>
+        </div>
+      </div>
 
-            function updateUI() {
-                // Банк
-                bankAmountEl.textContent = formatAmount(state.bank);
-                contrib1El.textContent = formatAmount(state.currentContrib1);
-                contrib2El.textContent = formatAmount(state.currentContrib2);
+      <div id="poemDisplay" class="poem" style="display:none;"></div>
 
-                // Кнопки "Забрать банк"
-                take1Btn.disabled = state.bank === 0;
-                take2Btn.disabled = state.bank === 0;
+      <!-- Защита диплома / круглый стол -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-top:25px;">
+        <div class="video-placeholder small" onclick="this.innerHTML='<span style=\'color:#f0c27f;font-size:0.95rem;\'>ВИДЕО: Защита диплома</span>'">
+          ВИДЕО: Защита диплома
+        </div>
+        <div class="video-placeholder small" onclick="this.innerHTML='<span style=\'color:#f0c27f;font-size:0.95rem;\'>ВИДЕО: Круглый стол</span>'">
+          ВИДЕО: Круглый стол
+        </div>
+      </div>
+      <p style="font-size:0.85rem;color:#4a6fa5;text-align:center;margin-top:10px;">
+        Творчество Маслова популяризируется: студенты читают стихи, 
+        проходят Масловские чтения
+      </p>
+    </div>
 
-                // Имена
-                name1Input.value = state.player1Name;
-                name2Input.value = state.player2Name;
-                stat1Title.textContent = `👤 ${state.player1Name}`;
-                stat2Title.textContent = `👤 ${state.player2Name}`;
-                avatar1.textContent = state.player1Name.charAt(0).toUpperCase() || '1';
-                avatar2.textContent = state.player2Name.charAt(0).toUpperCase() || '2';
+  </div>
 
-                // Капиталы
-                capital1El.textContent = formatAmount(state.capital1);
-                capital2El.textContent = formatAmount(state.capital2);
+  <!-- ═══════════════════════════════════════════════════════════
+       ВКЛАДКА: ВИДЕО
+       ═══════════════════════════════════════════════════════════ -->
+  <div id="tab-video" class="tab-content">
 
-                // Статистика
-                totalContrib1El.textContent = formatAmount(state.totalContrib1);
-                totalContrib2El.textContent = formatAmount(state.totalContrib2);
-                totalWin1El.textContent = formatAmount(state.totalWin1);
-                totalWin2El.textContent = formatAmount(state.totalWin2);
+    <div class="block">
+      <h2>🎬 Видеогалерея</h2>
+      <p>Документальные кадры, интервью, чтение стихов, выступления.</p>
 
-                const profit1 = state.totalWin1 - state.totalContrib1;
-                const profit2 = state.totalWin2 - state.totalContrib2;
-                profit1El.textContent = (profit1 >= 0 ? '+' : '') + formatAmount(profit1);
-                profit2El.textContent = (profit2 >= 0 ? '+' : '') + formatAmount(profit2);
-                profit1El.className = 'value ' + (profit1 >= 0 ? 'positive' : 'negative');
-                profit2El.className = 'value ' + (profit2 >= 0 ? 'positive' : 'negative');
+      <div class="video-placeholder" style="height:280px;">
+        ВИДЕО: «Виталий Маслов. Север в переплёте» (полная версия)
+      </div>
+      <p style="text-align:center;font-size:0.85rem;color:#4a6fa5;margin-bottom:25px;">
+        Документальный фильм о жизни и творчестве
+      </p>
 
-                // История
-                renderHistory();
-            }
+      <div class="video-placeholder" style="height:220px;">
+        ВИДЕО: Виталий Маслов читает рассказ «Зырянова бумага»
+      </div>
 
-            function renderHistory() {
-                if (state.history.length === 0) {
-                    historyListEl.innerHTML = '<div class="history-empty">Пока нет раздач. Скиньте фишки в банк и определите победителя!</div>';
-                    return;
-                }
-                let html = '';
-                // Показываем последние сверху
-                const reversed = [...state.history].reverse();
-                for (const record of reversed) {
-                    const winnerName = record.winner === 1 ? state.player1Name : state.player2Name;
-                    const winnerClass = record.winner === 1 ? 'p1-winner' : 'p2-winner';
-                    html += `
-                        <div class="history-item">
-                            <span>Раздача #${record.id}</span>
-                            <span>Взносы: ${formatAmount(record.contrib1)} / ${formatAmount(record.contrib2)}</span>
-                            <span>Банк: <strong>${formatAmount(record.amount)}</strong></span>
-                            <span class="winner ${winnerClass}">🏆 ${winnerName}</span>
-                        </div>
-                    `;
-                }
-                historyListEl.innerHTML = html;
-            }
+      <div class="video-placeholder" style="height:220px;">
+        ВИДЕО: Маслов на борту атомохода «Ленин». Интервью
+      </div>
 
-            function animateBank() {
-                bankAmountEl.classList.remove('pulse');
-                // Триггерим reflow
-                void bankAmountEl.offsetWidth;
-                bankAmountEl.classList.add('pulse');
-            }
+      <div class="video-placeholder" style="height:220px;">
+        ВИДЕО: Масловские чтения. Круглый стол
+      </div>
 
-            // ---------- Действия ----------
-            function addToBank(player, amount) {
-                // Проверка на корректность
-                if (amount <= 0 || isNaN(amount)) return;
-                // Проверка на достаточность капитала
-                if (player === 1 && state.capital1 < amount) {
-                    alert(`${state.player1Name}: недостаточно капитала! Доступно ${formatAmount(state.capital1)}`);
-                    return;
-                }
-                if (player === 2 && state.capital2 < amount) {
-                    alert(`${state.player2Name}: недостаточно капитала! Доступно ${formatAmount(state.capital2)}`);
-                    return;
-                }
+      <div class="video-placeholder" style="height:220px;">
+        ВИДЕО: Памятник В. С. Маслову на Аллее писателей
+      </div>
+    </div>
 
-                saveUndo();
-                if (player === 1) {
-                    state.capital1 -= amount;
-                    state.currentContrib1 += amount;
-                    state.totalContrib1 += amount;
-                    state.bank += amount;
-                } else if (player === 2) {
-                    state.capital2 -= amount;
-                    state.currentContrib2 += amount;
-                    state.totalContrib2 += amount;
-                    state.bank += amount;
-                }
-                animateBank();
-                updateUI();
-            }
+  </div>
 
-            function takeBank(player) {
-                if (state.bank === 0) return;
-                saveUndo();
-                const record = {
-                    id: state.history.length + 1,
-                    winner: player,
-                    amount: state.bank,
-                    contrib1: state.currentContrib1,
-                    contrib2: state.currentContrib2,
-                    timestamp: new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
-                };
-                state.history.push(record);
-                if (player === 1) {
-                    state.capital1 += state.bank;
-                    state.totalWin1 += state.bank;
-                } else if (player === 2) {
-                    state.capital2 += state.bank;
-                    state.totalWin2 += state.bank;
-                }
-                // Сбрасываем текущий банк и текущие взносы
-                state.bank = 0;
-                state.currentContrib1 = 0;
-                state.currentContrib2 = 0;
-                updateUI();
-            }
+  <!-- ═══════════════════════════════════════════════════════════
+       ВКЛАДКА: БИОГРАФИЯ
+       ═══════════════════════════════════════════════════════════ -->
+  <div id="tab-bio" class="tab-content">
 
-            function undo() {
-                if (state.undoStack.length === 0) return;
-                const snapshot = state.undoStack.pop();
-                restoreState(snapshot);
-                // После восстановления обновляем UI
-                updateUI();
-            }
+    <!-- БЛОК 4: Просветительский путь -->
+    <div class="block">
+      <h2><span class="block-number">4</span> Просветительский путь</h2>
+      <p>
+        Виталий Маслов — один из инициаторов возрождения в России 
+        Дня славянской письменности и культуры (24 мая). Благодаря 
+        его усилиям в Мурманске появился первый памятник Кириллу и 
+        Мефодию — дар Болгарии. Он организовал конкурс школьных 
+        сочинений «Храмы России», создал Дом памяти в родной Сёмже, 
+        где собрал имена жителей деревни, погибших в войнах[reference:5].
+      </p>
 
-            function resetGame() {
-                if (confirm('Начать новую игру? Капитал обоих игроков будет сброшен к 1000, история и статистика очищены.')) {
-                    saveUndo();
-                    state.player1Name = 'Игрок 1';
-                    state.player2Name = 'Игрок 2';
-                    state.capital1 = 1000;
-                    state.capital2 = 1000;
-                    state.currentContrib1 = 0;
-                    state.currentContrib2 = 0;
-                    state.bank = 0;
-                    state.totalContrib1 = 0;
-                    state.totalContrib2 = 0;
-                    state.totalWin1 = 0;
-                    state.totalWin2 = 0;
-                    state.history = [];
-                    state.undoStack = []; // очищаем стек, так как полный сброс
-                    updateUI();
-                }
-            }
+      <div class="video-placeholder" onclick="this.innerHTML='<span style=\'color:#f0c27f;font-size:1rem;\'>ГОЛОС МАСЛОВА: О просветительстве</span>'">
+        ВИДЕО: Голос Маслова
+      </div>
+      <p style="font-size:0.85rem;color:#4a6fa5;text-align:center;">
+        Аудиозапись: Виталий Маслов рассказывает о своей 
+        просветительской работе
+      </p>
 
-            function clearHistory() {
-                if (state.history.length === 0) return;
-                if (confirm('Очистить историю раздач? Статистика и капиталы останутся.')) {
-                    saveUndo();
-                    state.history = [];
-                    updateUI();
-                }
-            }
+      <!-- Культурная карта -->
+      <h3 style="margin-top:30px;">Культурная карта</h3>
+      <div class="map-grid">
+        <div class="map-item">
+          <div class="icon">📖</div>
+          <p><strong>День славянской письменности</strong><br>Возрождён в 1986 г.</p>
+        </div>
+        <div class="map-item">
+          <div class="icon">⛪</div>
+          <p><strong>Памятник Кириллу и Мефодию</strong><br>Мурманск, 1990 г.</p>
+        </div>
+        <div class="map-item">
+          <div class="icon">🏛️</div>
+          <p><strong>Дом памяти в Сёмже</strong><br>Создан Масловым</p>
+        </div>
+        <div class="map-item">
+          <div class="icon">✍️</div>
+          <p><strong>Конкурс «Храмы России»</strong><br>Школьные сочинения</p>
+        </div>
+        <div class="map-item">
+          <div class="icon">🌊</div>
+          <p><strong>Дни Баренцева моря</strong><br>Мурманск</p>
+        </div>
+        <div class="map-item">
+          <div class="icon">📚</div>
+          <p><strong>Масловские чтения</strong><br>Ежегодно с 2002 г.</p>
+        </div>
+      </div>
+    </div>
 
-            function updateNameFromInput(player) {
-                const input = player === 1 ? name1Input : name2Input;
-                const newName = input.value.trim() || (player === 1 ? 'Игрок 1' : 'Игрок 2');
-                if (newName !== (player === 1 ? state.player1Name : state.player2Name)) {
-                    saveUndo();
-                    if (player === 1) {
-                        state.player1Name = newName;
-                    } else {
-                        state.player2Name = newName;
-                    }
-                    updateUI();
-                }
-            }
+    <!-- БЛОК 5: Обращение потомкам -->
+    <div class="block">
+      <h2><span class="block-number">5</span> Обращение потомкам</h2>
 
-            // ---------- Обработчики событий ----------
-            // Кнопки фиксированных сумм
-            document.querySelectorAll('.chip-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const player = parseInt(btn.dataset.player);
-                    const amount = parseFloat(btn.dataset.amount); // поддержка 2.5
-                    addToBank(player, amount);
-                });
-            });
+      <div class="legacy">
+        <blockquote>
+          Счастья вам, сыновья, и большого настоящего успеха! 
+          Что б ни было, где б мы ни колесили, — необходим нам свой погост, 
+          поскотина, где наш отец и прадесятый дед и стадо пас, и жизнь 
+          в пути высматривал… Придёт пора — и вы вернётесь сюда. 
+          Помните корни свои.
+        </blockquote>
+        <p style="color:#9bb0c9;font-size:0.95rem;">
+          — Из письма Виталия Маслова сыновьям, 1998 г.
+        </p>
+      </div>
 
-            // Кнопки "В банк" для произвольной суммы
-            document.getElementById('custom-btn1').addEventListener('click', () => {
-                const amount = parseFloat(custom1Input.value);
-                if (amount > 0) {
-                    addToBank(1, amount);
-                    custom1Input.value = '';
-                } else {
-                    alert('Введите корректную сумму');
-                }
-            });
-            document.getElementById('custom-btn2').addEventListener('click', () => {
-                const amount = parseFloat(custom2Input.value);
-                if (amount > 0) {
-                    addToBank(2, amount);
-                    custom2Input.value = '';
-                } else {
-                    alert('Введите корректную сумму');
-                }
-            });
+      <div class="video-placeholder" style="height:250px;margin-top:25px;">
+        ВИДЕО: Послание потомкам
+      </div>
+      <p style="font-size:0.85rem;color:#4a6fa5;text-align:center;">
+        Мини-ролик: сгенерированное ИИ видеообращение от лица Виталия Маслова
+      </p>
 
-            // Enter в поле произвольной суммы
-            custom1Input.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') document.getElementById('custom-btn1').click();
-            });
-            custom2Input.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') document.getElementById('custom-btn2').click();
-            });
+      <div style="background:#0b1626;border-radius:12px;padding:20px;margin-top:20px;border:1px solid #2e5077;">
+        <p style="color:#f0c27f;font-style:italic;text-align:center;font-size:1.05rem;">
+          «Читайте. Помните. Возвращайтесь к корням.  
+          Север — это не точка на карте. Север — это мы».
+        </p>
+      </div>
+    </div>
 
-            // Кнопки "Забрать банк"
-            take1Btn.addEventListener('click', () => takeBank(1));
-            take2Btn.addEventListener('click', () => takeBank(2));
+  </div>
 
-            // Имена
-            name1Input.addEventListener('change', () => updateNameFromInput(1));
-            name2Input.addEventListener('change', () => updateNameFromInput(2));
+  <div class="counter">
+    <p>© Виталий Семёнович Маслов · 1935–2001 · Мурманск — Сёмжа</p>
+    <p style="font-size:0.75rem;color:#2e5077;margin-top:5px;">
+      Страница создана в память о писателе, моряке и просветителе
+    </p>
+  </div>
 
-            // Кнопки управления
-            document.getElementById('undoBtn').addEventListener('click', undo);
-            document.getElementById('resetBtn').addEventListener('click', resetGame);
-            document.getElementById('clearHistoryBtn').addEventListener('click', clearHistory);
+</div>
 
-            // ---------- Инициализация ----------
-            updateUI();
-        })();
-    </script>
+<!-- Кнопка «наверх» -->
+<button class="back-to-top" id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<script>
+  // ── Переключение вкладок ──
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById(btn.dataset.tab).classList.add('active');
+    });
+  });
+
+  // ── Интерактивная презентация стихотворений ──
+  const poems = {
+    1: {
+      title: '«Северная быль» (1968)',
+      text: '…Море дышало холодом и солью.\\nВолны бились о борт, как тысячи сердец.\\nЯ стоял на палубе и слушал,\\nкак Север рассказывает мне свою быль…'
+    },
+    2: {
+      title: '«Зырянова бумага» (1973)',
+      text: '…Бумага была старая, пожелтевшая от времени.\\nНа ней — почерк деда, ровный и твёрдый.\\nОн писал о жизни, о море, о доме.\\nЯ читал и чувствовал: он рядом…'
+    },
+    3: {
+      title: '«Беломорское горло» (1985)',
+      text: '…Белое море не прощает слабости.\\nОно испытывает на прочность каждого.\\nКто прошёл через его горло —\\nтот навсегда останется моряком…'
+    }
+  };
+
+  function showPoem(n) {
+    const display = document.getElementById('poemDisplay');
+    const p = poems[n];
+    display.style.display = 'block';
+    display.innerHTML = `
+      <h3 style="margin-bottom:12px;">${p.title}</h3>
+      <p>${p.text.replace(/\\n/g, '<br>')}</p>
+      <p style="margin-top:12px;font-size:0.85rem;color:#4a6fa5;font-style:normal;">
+        🎬 Видео: Виталий Маслов читает это произведение (заглушка)
+      </p>
+    `;
+    display.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  // ── Кнопка «наверх» ──
+  const backBtn = document.getElementById('backToTop');
+  window.addEventListener('scroll', () => {
+    backBtn.classList.toggle('visible', window.scrollY > 400);
+  });
+
+  // ── Анимация появления блоков при прокрутке ──
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.style.opacity = '1';
+        entry.target.style.transform = 'translateY(0)';
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.block').forEach(block => {
+    block.style.opacity = '0';
+    block.style.transform = 'translateY(20px)';
+    block.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+    observer.observe(block);
+  });
+</script>
+
 </body>
 </html>
